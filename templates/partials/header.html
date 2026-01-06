@@ -1,0 +1,854 @@
+  {% load static %}
+{% load i18n %}
+
+  <header id="header" class="header sticky-top">
+    <!-- Top Bar -->
+    <div class="top-bar py-2">
+      <div class="container-fluid container-xl">
+        <div class="row align-items-center">
+          <div class="col-lg-4 d-none d-lg-flex">
+            <div class="top-bar-item"> 
+              <i class="bi bi-telephone-fill me-2"></i>
+              <span>Need help? Call us: </span>
+              <a href="tel:+1234567890">01098708132</a>
+            </div>
+          </div>
+
+          <div class="col-lg-4 col-md-12 text-center">
+            <div class="announcement-slider swiper init-swiper">
+              <script type="application/json" class="swiper-config">
+                {
+                  "loop": true,
+                  "speed": 600,
+                  "autoplay": {
+                    "delay": 5000
+                  },
+                  "slidesPerView": 1,
+                  "direction": "vertical",
+                  "effect": "slide"
+                }
+              </script>
+              <div class="swiper-wrapper">
+                <div class="swiper-slide">🚚 Free shipping on orders over $50</div>
+                <div class="swiper-slide">💰 30 days money back guarantee.</div>
+                <div class="swiper-slide">🎁 20% off on your first order</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-lg-4 d-none d-lg-block">
+            <div class="d-flex justify-content-end">
+              <div class="top-bar-item dropdown me-3">
+                <a href="#" class="dropdown-toggle" data-bs-toggle="dropdown">
+                  <i class="bi bi-translate me-2"></i>EN
+                </a>
+
+                </ul>
+              </div>
+              <div class="top-bar-item dropdown">
+                <a href="#" class="dropdown-toggle" data-bs-toggle="dropdown">
+                  <i class="bi bi-currency-dollar me-2"></i>USD
+                </a>
+                <ul class="dropdown-menu">
+                  <li><a class="dropdown-item" href="#"><i class="bi bi-check2 me-2 selected-icon"></i>USD</a></li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Main Header -->
+    <div class="main-header">
+      <div class="container-fluid container-xl">
+        <div class="d-flex py-3 align-items-center justify-content-between">
+
+          <!-- Logo -->
+          <a href="{% url 'index'%}" class="logo d-flex align-items-center">
+            <!-- Uncomment the line below if you also wish to use an image logo -->
+            <!-- <img src="products/img/logo.webp" alt=""> -->
+            <h1 class="sitename">PrimeShop</h1>
+          </a>
+
+    <!-- Search -->
+<form class="search-form desktop-search-form"
+      action="{% url 'search_results' %}"
+      method="get">
+  <div class="input-group">
+    <input type="text"
+           class="form-control"
+           name="q"
+           placeholder="Search for products">
+    <button class="btn" type="submit">
+      <i class="bi bi-search"></i>
+    </button>
+  </div>
+</form>
+
+          <!-- Actions -->
+          <div class="header-actions d-flex align-items-center justify-content-end">
+
+            <!-- Mobile Search Toggle -->
+            <button class="header-action-btn mobile-search-toggle d-xl-none" type="button" data-bs-toggle="collapse" data-bs-target="#mobileSearch" aria-expanded="false" aria-controls="mobileSearch">
+              <i class="bi bi-search"></i>
+            </button>
+
+            <!-- Account -->
+            <div class="dropdown account-dropdown">
+           <button class="header-action-btn" data-bs-toggle="dropdown">
+                <i class="bi bi-person"></i>
+            </button>
+
+              <div class="dropdown-menu">
+                <div class="dropdown-header">
+                  <h6>Welcome to <span class="sitename">FashionStore</span></h6>
+                  <p class="mb-0">Access account &amp; manage orders</p>
+                </div>
+                <div class="dropdown-body">
+                  <a class="dropdown-item d-flex align-items-center" href="{% url 'my_account'%}">
+                    <i class="bi bi-person-circle me-2"></i>
+                    <span>My Profile</span>
+                  </a>
+                  <a class="dropdown-item d-flex align-items-center" href="{% url 'my_orders_page'%}">
+                    <i class="bi bi-bag-check me-2"></i>
+                    <span>My Orders</span>
+                  </a>
+                  <a class="dropdown-item d-flex align-items-center" href="{% url 'wishlist_page'%}">
+                    <i class="bi bi-heart me-2"></i>
+                    <span>My Wishlist</span>
+                  </a>
+             
+                </div>
+                <div class="dropdown-footer">
+
+                    {% if user.is_authenticated %}
+                        
+                        <form action="{% url 'logout' %}" method="post">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-danger w-100">Logout</button>
+                        </form>
+
+                    {% else %}
+
+                        <a href="{% url 'login'%}" class="btn btn-primary w-100 mb-2">Sign In</a>
+                        <a href="{% url 'register' %}" class="btn btn-outline-primary w-100">Register</a>
+
+                    {% endif %}
+
+                </div>
+
+              </div>
+            </div>
+
+            <!-- Wishlist -->
+            <a href="{% url 'wishlist_page' %}" class="header-action-btn d-none d-md-block"> 
+              <i class="bi bi-heart"></i>
+            </a>
+
+            <!-- Cart -->
+            <a href="{% url 'cart_view' %}" class="header-action-btn">
+              <i class="bi bi-cart3"></i>
+
+            </a>
+
+            <!-- Mobile Navigation Toggle -->
+            <i class="mobile-nav-toggle d-xl-none bi bi-list me-0"></i>
+
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Navigation -->
+    <div class="header-nav">
+      <div class="container-fluid container-xl position-relative">
+        <nav id="navmenu" class="navmenu">
+          <ul>
+            <li><a href="{% url 'index' %}" class="active">Home</a></li>
+            <li><a href="{% url 'about' %}">About</a></li>
+            <li><a href="{% url 'categories_page' %}">Category</a></li>
+            <li><a href="{% url 'product_list' %}">Product Details</a></li>
+            <li><a href="{% url 'cart_view' %}">Cart</a></li>
+           <li>  {% if user.is_superuser %}
+            <a href="{% url 'admin:index' %}" >
+                Admin Panel
+              </a>
+              {% endif %}
+          </li>
+
+            <!-- Products Mega Menu 1 -->
+            <li class="products-megamenu-1"><a href="#"><span>Megamenu 1</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
+
+              <!-- Products Mega Menu 1 Mobile View -->
+              <ul class="mobile-megamenu">
+
+  <li><a href="{% url 'new_arrivals_page' %}">Featured Products</a></li>
+  <li><a href="{% url 'new_arrivals_page' %}">New Arrivals</a></li>
+  <li><a href="{% url 'sale_page' %}">Sale Items</a></li>
+
+  <!-- Clothing -->
+  <li class="dropdown">
+    <a href="#"><span>Clothing</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
+    <ul>
+      <li><a href="{% url 'men_page' %}">Men's Wear</a></li>
+      <li><a href="{% url 'women_page' %}">Women's Wear</a></li>
+      <li><a href="{% url 'category_detail_page' 'belts' %}">Belts</a></li>
+      <li><a href="{% url 'category_detail_page' 'kids-collection' %}">Kids Collection</a></li>
+      <li><a href="{% url 'category_detail_page' 'accessories' %}">Accessories</a></li>
+    </ul>
+  </li>
+
+  <!-- Electronics -->
+  <li class="dropdown">
+    <a href="#"><span>Electronics</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
+    <ul>
+      <li><a href="{% url 'category_detail_page' 'smart-phones' %}">Smartphones</a></li>
+      <li><a href="{% url 'category_detail_page' 'laptops' %}">Laptops</a></li>
+      <li><a href="{% url 'category_detail_page' 'audio-devices' %}">Audio Devices</a></li>
+      <li><a href="{% url 'category_detail_page' 'smart-home' %}">Smart Home</a></li>
+    </ul>
+  </li>
+
+  <!-- Home & Living -->
+  <li class="dropdown">
+    <a href="#"><span>Home & Living</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
+    <ul>
+      <li><a href="{% url 'category_detail_page' 'furniture' %}">Furniture</a></li>
+      <li><a href="{% url 'category_detail_page' 'decor' %}">Decor</a></li>
+      <li><a href="{% url 'category_detail_page' 'kitchen' %}">Kitchen</a></li>
+      <li><a href="{% url 'category_detail_page' 'bedding' %}">Bedding</a></li>
+      <li><a href="{% url 'category_detail_page' 'lighting' %}">Lighting</a></li>
+    </ul>
+  </li>
+
+  <!-- Beauty -->
+  <li class="dropdown">
+    <a href="#"><span>Beauty</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
+    <ul>
+      <li><a href="{% url 'category_detail_page' 'skin-care' %}">Skincare</a></li>
+      <li><a href="{% url 'category_detail_page' 'makeup' %}">Makeup</a></li>
+      <li><a href="{% url 'category_detail_page' 'haircare' %}">Haircare</a></li>
+      <li><a href="{% url 'category_detail_page' 'fragrances' %}">Fragrances</a></li>
+      <li><a href="{% url 'category_detail_page' 'personal-care' %}">Personal Care</a></li>
+    </ul>
+  </li>
+
+</ul>
+
+              <!-- End Products Mega Menu 1 Mobile View -->
+
+              <!-- Products Mega Menu 1 Desktop View -->
+              <div class="desktop-megamenu">
+
+                <div class="megamenu-tabs">
+                  <ul class="nav nav-tabs" id="productMegaMenuTabs" role="tablist">
+                    <li class="nav-item" role="presentation">
+                      <button class="nav-link active" id="featured-tab" data-bs-toggle="tab" data-bs-target="#featured-content-1862" type="button" aria-selected="true" role="tab">Featured</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                      <button class="nav-link" id="new-tab" data-bs-toggle="tab" data-bs-target="#new-content-1862" type="button" aria-selected="false" tabindex="-1" role="tab">New Arrivals</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                      <button class="nav-link" id="sale-tab" data-bs-toggle="tab" data-bs-target="#sale-content-1862" type="button" aria-selected="false" tabindex="-1" role="tab">Sale</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                      <button class="nav-link" id="category-tab" data-bs-toggle="tab" data-bs-target="#category-content-1862" type="button" aria-selected="false" tabindex="-1" role="tab">Categories</button>
+                    </li>
+                  </ul>
+                </div>
+
+                <!-- Tabs Content -->
+                <div class="megamenu-content tab-content">
+
+                  <!-- Featured Tab -->
+                  <div class="tab-pane fade show active" id="featured-content-1862" role="tabpanel" aria-labelledby="featured-tab">
+  <div class="product-grid">
+
+    <!-- Product 1 -->
+    <div class="product-card">
+      <div class="product-image">
+        <a href="{% url 'product_detail' 'premium-headphones' %}">
+          <img src="{% static 'products/img/pro1.jpg' %}" alt="Premium Headphones" loading="lazy">
+        </a>
+      </div>
+      <div class="product-info">
+        <h5>Premium Headphones</h5>
+        <p class="price">$129.99</p>
+        <a href="{% url 'product_detail' 'premium-headphones' %}" class="btn-view">
+          View Product
+        </a>
+      </div>
+    </div>
+
+    <!-- Product 2 -->
+    <div class="product-card">
+      <div class="product-image">
+        <a href="{% url 'product_detail' 'apple-watch-ultra-2-49mm' %}">
+          <img src="{% static 'products/img/pro4.webp' %}" alt="Smart Watch" loading="lazy">
+        </a>
+      </div>
+      <div class="product-info">
+        <h5>Smart Watch</h5>
+        <p class="price">$199.99</p>
+        <a href="{% url 'product_detail' 'apple-watch-ultra-2-49mm' %}" class="btn-view">
+          View Product
+        </a>
+      </div>
+    </div>
+
+    <!-- Product 3 -->
+    <div class="product-card">
+      <div class="product-image">
+        <a href="{% url 'product_detail' 'airpods-4-with-active-noise-cancellation' %}">
+          <img src="{% static 'products/img/pro2.jpg' %}" alt="Wireless Earbuds" loading="lazy">
+        </a>
+      </div>
+      <div class="product-info">
+        <h5>Wireless Earbuds</h5>
+        <p class="price">$89.99</p>
+        <a href="{% url 'product_detail' 'airpods-4-with-active-noise-cancellation' %}" class="btn-view">
+          View Product
+        </a>
+      </div>
+    </div>
+
+    <!-- Product 4 -->
+    <div class="product-card">
+      <div class="product-image">
+        <a href="{% url 'product_detail' 'jbl-tune-520bt-wireless-on-ear-headphones-pure-bass-sound-57h-battery-with-speed-charge-hands-fre' %}">
+          <img src="{% static 'products/img/pro4.jpg' %}" alt="Bluetooth Speaker" loading="lazy">
+        </a>
+      </div>
+      <div class="product-info">
+        <h5>Bluetooth Speaker</h5>
+        <p class="price">$79.99</p>
+        <a href="{% url 'product_detail' 'jbl-tune-520bt-wireless-on-ear-headphones-pure-bass-sound-57h-battery-with-speed-charge-hands-fre' %}" class="btn-view">
+          View Product
+        </a>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+
+  <!-- New Arrivals Tab -->
+<div class="tab-pane fade" id="new-content-1862" role="tabpanel" aria-labelledby="new-tab">
+  <div class="product-grid">
+
+    <!-- Product 1 -->
+    <div class="product-card">
+      <div class="product-image">
+        <a href="{% url 'product_detail' 'apple-watch-series-11-gps-46mm-smartwatch-with-jet-black-aluminium-case-with-black-sport-band-ml-s' %}">
+          <img src="{% static 'products/img/pro-7.jpg' %}" alt="New Arrival" loading="lazy">
+          <span class="badge-new">New</span>
+        </a>
+      </div>
+      <div class="product-info">
+        <h5>Fitness Tracker</h5>
+        <p class="price">$69.99</p>
+        <a href="{% url 'product_detail' 'apple-watch-series-11-gps-46mm-smartwatch-with-jet-black-aluminium-case-with-black-sport-band-ml-s' %}" class="btn-view">
+          View Product
+        </a>
+      </div>
+    </div>
+
+    <!-- Product 2 -->
+    <div class="product-card">
+      <div class="product-image">
+        <a href="{% url 'product_detail' 'xiaomi-mi-20w-wireless-car-charger-with-fast-charging-easy-installation-secure-phone-grip-compati' %}">
+          <img src="{% static 'products/img/pro6.jpg' %}" alt="New Arrival" loading="lazy">
+          <span class="badge-new">New</span>
+        </a>
+      </div>
+      <div class="product-info">
+        <h5>Wireless Charger</h5>
+        <p class="price">$39.99</p>
+        <a href="{% url 'product_detail' 'xiaomi-mi-20w-wireless-car-charger-with-fast-charging-easy-installation-secure-phone-grip-compati' %}" class="btn-view">
+          View Product
+        </a>
+      </div>
+    </div>
+
+    <!-- Product 3 -->
+    <div class="product-card">
+      <div class="product-image">
+        <a href="{% url 'product_detail' 'broadlink-smart-bulb-10w-rgb-800lm' %}">
+          <img src="{% static 'products/img/pro-10.jpg' %}" alt="New Arrival" loading="lazy">
+          <span class="badge-new">New</span>
+        </a>
+      </div>
+      <div class="product-info">
+        <h5>Smart Bulb Set</h5>
+        <p class="price">$49.99</p>
+        <a href="{% url 'product_detail' 'broadlink-smart-bulb-10w-rgb-800lm' %}" class="btn-view">
+          View Product
+        </a>
+      </div>
+    </div>
+
+    <!-- Product 4 -->
+    <div class="product-card">
+      <div class="product-image">
+        <a href="{% url 'product_detail' 'anker-737-power-bank-powercore-24k-24000mah-3-port-portable-charger-with-140w-output-smart-digi' %}">
+          <img src="{% static 'products/img/pro-11.jpg' %}" alt="New Arrival" loading="lazy">
+          <span class="badge-new">New</span>
+        </a>
+      </div>
+      <div class="product-info">
+        <h5>Portable Power Bank</h5>
+        <p class="price">$59.99</p>
+        <a href="{% url 'product_detail' 'anker-737-power-bank-powercore-24k-24000mah-3-port-portable-charger-with-140w-output-smart-digi' %}" class="btn-view">
+          View Product
+        </a>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+                  <!-- Sale Tab -->
+<div class="tab-pane fade" id="sale-content-1862" role="tabpanel" aria-labelledby="sale-tab">
+  <div class="product-grid">
+
+    <!-- Product 1 -->
+    <div class="product-card">
+      <div class="product-image">
+        <a href="{% url 'product_detail' 'generic-mini-bluetooth-keyboard-wireless-rechargeable-keyboard-ios-android-mac-os-and-windows-for' %}">
+          <img src="{% static 'products/img/pro-12.jpg' %}" alt="Sale Product" loading="lazy">
+          <span class="badge-sale">-30%</span>
+        </a>
+      </div>
+      <div class="product-info">
+        <h5>Wireless Keyboard</h5>
+        <p class="price">
+          <span class="original-price">$89.99</span> $62.99
+        </p>
+        <a href="{% url 'product_detail' 'generic-mini-bluetooth-keyboard-wireless-rechargeable-keyboard-ios-android-mac-os-and-windows-for' %}" class="btn-view">
+          View Product
+        </a>
+      </div>
+    </div>
+
+    <!-- Product 2 -->
+    <div class="product-card">
+      <div class="product-image">
+        <a href="{% url 'product_detail' 'redragon-wireless-gaming-mouse-m914-tri-mode-24gusb-cbluetooth-mouse-gaming-24000-dpi-rgb-back' %}">
+          <img src="{% static 'products/img/pro-13.jpg' %}" alt="Sale Product" loading="lazy">
+          <span class="badge-sale">-25%</span>
+        </a>
+      </div>
+      <div class="product-info">
+        <h5>Gaming Mouse</h5>
+        <p class="price">
+          <span class="original-price">$59.99</span> $44.99
+        </p>
+        <a href="{% url 'product_detail' 'redragon-wireless-gaming-mouse-m914-tri-mode-24gusb-cbluetooth-mouse-gaming-24000-dpi-rgb-back' %}" class="btn-view">
+          View Product
+        </a>
+      </div>
+    </div>
+
+    <!-- Product 3 -->
+    <div class="product-card">
+      <div class="product-image">
+        <a href="{% url 'product_detail' 'modern-industrial-table-lamp-black-metal-base' %}">
+          <img src="{% static 'products/img/pro-14.jpg' %}" alt="Sale Product" loading="lazy">
+          <span class="badge-sale">-40%</span>
+        </a>
+      </div>
+      <div class="product-info">
+        <h5>Desk Lamp</h5>
+        <p class="price">
+          <span class="original-price">$49.99</span> $29.99
+        </p>
+        <a href="{% url 'product_detail' 'modern-industrial-table-lamp-black-metal-base' %}" class="btn-view">
+          View Product
+        </a>
+      </div>
+    </div>
+
+    <!-- Product 4 -->
+    <div class="product-card">
+      <div class="product-image">
+        <a href="{% url 'product_detail' 'portable-universal-usb-30-superspeed-4-ports-hub-with-led-light-ultra-slim-splitter-adapter-cable-1' %}">
+          <img src="{% static 'products/img/pro-15.jpg' %}" alt="Sale Product" loading="lazy">
+          <span class="badge-sale">-20%</span>
+        </a>
+      </div>
+      <div class="product-info">
+        <h5>USB-C Hub</h5>
+        <p class="price">
+          <span class="original-price">$39.99</span> $31.99
+        </p>
+        <a href="{% url 'product_detail' 'portable-universal-usb-30-superspeed-4-ports-hub-with-led-light-ultra-slim-splitter-adapter-cable-1' %}" class="btn-view">
+          View Product
+        </a>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+
+                  <!-- Categories Tab -->
+                  <div class="tab-pane fade" id="category-content-1862" role="tabpanel" aria-labelledby="category-tab">
+                    <div class="category-grid">
+                      <div class="category-column">
+                        <h4>Clothing</h4>
+                        <ul>
+                          <li><a href="{% url 'men_page' %}">Men's Wear</a></li>
+                          <li><a href="{% url 'women_page' %}">Women's Wear</a></li>
+                          <li><a href="{% url 'category_detail_page' slug='belts' %}">belts</a></li>
+                          <li><a href="{% url 'category_detail_page' slug='kids-collection'  %}">Kids Collection</a></li>
+                          <li><a href="{% url 'category_detail_page' slug='accessories'  %}">Accessories</a></li>
+                        </ul>
+                      </div>
+
+                      <div class="category-column">
+                        <h4>Electronics</h4>
+                        <ul>
+                          <li><a href="{% url 'category_detail_page' slug='smart-phones'  %}">Smartphones</a></li>
+                          <li><a href="{% url 'category_detail_page' slug='laptops'  %}">Laptops</a></li>
+                          <li><a href="{% url 'category_detail_page' slug='audio-devices'  %}">Audio Devices</a></li>
+                          <li><a href="{% url 'category_detail_page' slug='smart-home'  %}">Smart Home</a></li>
+                        </ul>
+                      </div>
+                      <div class="category-column">
+                        <h4>Home &amp; Living</h4>
+                        <ul>
+                          <li><a href="{% url 'category_detail_page' slug='furniture'  %}">Furniture</a></li>
+                          <li><a href="{% url 'category_detail_page' slug='decor'  %}">Decor</a></li>
+                          <li><a href="{% url 'category_detail_page' slug='kitchen'  %}">Kitchen</a></li>
+                          <li><a href="{% url 'category_detail_page' slug='bedding'  %}">Bedding</a></li>
+                          <li><a href="{% url 'category_detail_page' slug='lighting'  %}">Lighting</a></li>
+                        </ul>
+                      </div>
+                      <div class="category-column">
+                        <h4>Beauty</h4>
+                        <ul>
+                          <li><a href="{% url 'category_detail_page' slug='skin-care'  %}">Skincare</a></li>
+                          <li><a href="{% url 'category_detail_page' slug='makeup'  %}">Makeup</a></li>
+                          <li><a href="{% url 'category_detail_page' slug='haircare'  %}">Haircare</a></li>
+                          <li><a href="{% url 'category_detail_page' slug='fragrances'  %}">Fragrances</a></li>
+                          <li><a href="{% url 'category_detail_page' slug='personal-care'  %}">Personal Care</a></li>
+                        </ul>
+                      </div>
+                    </div>
+                  </div>
+
+                </div>
+
+              </div><!-- End Products Mega Menu 1 Desktop View -->
+
+            </li><!-- End Products Mega Menu 1 -->
+         
+            <!-- Products Mega Menu 2 -->
+            <li class="products-megamenu-2"><a href="#"><span>Megamenu 2</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
+
+              <!-- Products Mega Menu 2 Mobile View -->
+               <ul class="mobile-megamenu">
+
+  <!-- WOMEN -->
+  <li class="dropdown">
+    <a href="#"><span>Women</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
+    <ul>
+
+      <li class="dropdown">
+        <a href="#"><span>Clothing</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
+        <ul>
+          <li><a href="{% url 'category_detail_page' 'shirt-tops' %}">Shirts & Tops</a></li>
+          <li><a href="{% url 'category_detail_page' 'jackets-coats' %}">Coats & Outerwear</a></li>
+          <li><a href="{% url 'category_detail_page' 'sweatshirts' %}">Sweatshirts</a></li>
+          <li><a href="{% url 'category_detail_page' 'dresses' %}">Dresses</a></li>
+          <li><a href="{% url 'category_detail_page' 'swimwear' %}">Swimwear</a></li>
+          <li><a href="{% url 'category_detail_page' 'jeans' %}">Jeans</a></li>
+        </ul>
+      </li>
+
+      <li class="dropdown">
+        <a href="#"><span>Shoes</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
+        <ul>
+          <li><a href="{% url 'category_detail_page' 'boot' %}">Boots</a></li>
+          <li><a href="{% url 'category_detail_page' 'sandals' %}">Sandals</a></li>
+          <li><a href="{% url 'category_detail_page' 'heels' %}">Heels</a></li>
+          <li><a href="{% url 'category_detail_page' 'sneakers' %}">Sneakers</a></li>
+          <li><a href="{% url 'category_detail_page' 'slippers' %}">Slippers</a></li>
+          <li><a href="{% url 'category_detail_page' 'wide-shoes' %}">Wide Shoes</a></li>
+        </ul>
+      </li>
+
+      <li class="dropdown">
+        <a href="#"><span>Accessories</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
+        <ul>
+          <li><a href="{% url 'category_detail_page' 'handbags' %}">Handbags</a></li>
+          <li><a href="{% url 'category_detail_page' 'eyewear' %}">Eyewear</a></li>
+          <li><a href="{% url 'category_detail_page' 'hats' %}">Hats</a></li>
+          <li><a href="{% url 'category_detail_page' 'jewelry' %}">Jewelry</a></li>
+          <li><a href="{% url 'category_detail_page' 'belt' %}">Belts</a></li>
+
+        </ul>
+      </li>
+
+      <li class="dropdown">
+        <a href="#"><span>Special Sizes</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
+        <ul>
+          <li><a href="{% url 'category_detail_page' 'plus-size' %}">Plus Size</a></li>
+        </ul>
+      </li>
+
+    </ul>
+  </li>
+
+  <!-- MEN -->
+  <li class="dropdown">
+    <a href="#"><span>Men</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
+    <ul>
+
+      <li class="dropdown">
+        <a href="#"><span>Clothing</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
+        <ul>
+          <li><a href="{% url 'category_detail_page' 'shirts-polos' %}">Shirts & Polos</a></li>
+          <li><a href="{% url 'category_detail_page' 'coats-outerwear' %}">Jackets & Coats</a></li>
+          <li><a href="{% url 'category_detail_page' 'shirts-tops' %}">Shirts & Tops</a></li>
+          <li><a href="{% url 'category_detail_page' 'activewears' %}">Activewear</a></li>
+          <li><a href="{% url 'category_detail_page' 'suits' %}">Suits</a></li>
+        </ul>
+      </li>
+
+      <li class="dropdown">
+        <a href="#"><span>Shoes</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
+        <ul>
+          <li><a href="{% url 'category_detail_page' 'sneaker' %}">Sneakers</a></li>
+          <li><a href="{% url 'category_detail_page' 'boots' %}">Boots</a></li>
+          <li><a href="{% url 'category_detail_page' 'slipper' %}">Slippers</a></li>
+          <li><a href="{% url 'category_detail_page' 'oxfords' %}">Oxfords</a></li>
+          <li><a href="{% url 'category_detail_page' 'mens-footwear' %}">Men's Footwear</a></li>
+        </ul>
+      </li>
+
+      <li class="dropdown">
+        <a href="#"><span>Accessories</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
+        <ul>
+          <li><a href="{% url 'category_detail_page' 'Watch' %}">Watches</a></li>
+          <li><a href="{% url 'category_detail_page' 'belts' %}">Belts</a></li>
+          <li><a href="{% url 'category_detail_page' 'wallets' %}">Wallets</a></li>
+          <li><a href="{% url 'category_detail_page' 'sunglasses' %}">Sunglasses</a></li>
+        </ul>
+      </li>
+
+      <li class="dropdown">
+        <a href="#"><span>Special</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
+        <ul>
+          <li><a href="{% url 'category_detail_page' 'slim-fit' %}">Slim Fit</a></li>
+          <li><a href="{% url 'category_detail_page' 'extended-sizes' %}">Extended Sizes</a></li>
+        </ul>
+      </li>
+
+    </ul>
+  </li>
+
+</ul>
+
+          <!-- End Products Mega Menu 2 Mobile View -->
+
+
+
+              
+
+              <!-- Products Mega Menu 2 Desktop View -->
+              <div class="desktop-megamenu">
+
+                <div class="megamenu-tabs">
+                  <ul class="nav nav-tabs" role="tablist">
+                    <li class="nav-item" role="presentation">
+                      <button class="nav-link active" id="womens-tab" data-bs-toggle="tab" data-bs-target="#womens-content-1883" type="button" aria-selected="true" role="tab">WOMEN</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                      <button class="nav-link" id="mens-tab" data-bs-toggle="tab" data-bs-target="#mens-content-1883" type="button" aria-selected="false" tabindex="-1" role="tab">MEN</button>
+                    </li>
+                   
+                  </ul>
+                </div>
+
+                <!-- Tabs Content -->
+                <div class="megamenu-content tab-content">
+
+                  <!-- Women Tab -->
+                  <div class="tab-pane fade show active" id="womens-content-1883" role="tabpanel" aria-labelledby="womens-tab">
+                    <div class="category-layout">
+                      <div class="categories-section">
+                        <div class="category-headers">
+                          <h4>Clothing</h4>
+                          <h4>Shoes</h4>
+                          <h4>Accessories</h4>
+                          <h4>Specialty Sizes</h4>
+                        </div>
+
+                        <div class="category-links">
+                          <div class="link-row">
+                            <a href="{% url 'category_detail_page' slug='shirt-tops' %}">Shirts &amp; Tops</a>
+                            <a href="{% url 'category_detail_page' slug='boot' %}">Boots</a>
+                            <a href="{% url 'category_detail_page' 'handbags' %}">Handbags</a>
+                            <a href="{% url 'category_detail_page' slug='plus-size' %}">Plus Size</a>
+                          </div>
+                          <div class="link-row">
+                            <a href="{% url 'category_detail_page' slug='jackets-coats' %}">Coats &amp; Outerwear</a>
+                            <a href="{% url 'category_detail_page' slug='sandals' %}">Sandals</a>
+                            <a href="{% url 'category_detail_page' slug='eyewear' %}">Eyewear</a>
+                          </div>
+                        
+                          <div class="link-row">
+                            <a href="{% url 'category_detail_page' slug='sweatshirts' %}">Sweatshirts</a>
+                             <a href="{% url 'category_detail_page' slug='wide-shoes' %}">Wide Shoes</a>
+
+                             <a href="{% url 'category_detail_page' slug='belt' %}">Belts</a>
+
+
+                          </div>
+                          <div class="link-row">
+                            <a href="{% url 'category_detail_page' slug='dresses' %}">Dresses</a>
+                                  <a href="{% url 'category_detail_page' slug='heels' %}">Heels</a>
+
+                            <a href="{% url 'category_detail_page' slug='jewelry' %}">Jewelry</a>
+
+                            <a href="#"></a>
+                          </div>
+                          <div class="link-row">
+                            <a href="{% url 'category_detail_page' slug='swimwear' %}">Swimwear</a>
+                            <a href="{% url 'category_detail_page' slug='sneakers' %}">Sneakers</a>
+
+                            <a href="{% url 'category_detail_page' slug='hats' %}">Hats</a>
+
+                            <a href="#"></a>
+                          </div>
+                            <div class="link-row">
+                            <a href="{% url 'category_detail_page' slug='jeans' %}">Jeans</a>
+                            <a href="{% url 'category_detail_page' slug='slippers' %}">slippers</a>
+                          </div>
+                          
+                          
+                        </div>
+                      </div>
+                      <div class="featured-section">
+                        <div class="featured-image">
+                          <img src="{% static 'products/img/product/product-f-1.webp' %}" alt="Women's Heels Collection">
+                          <div class="featured-content">
+                            <h3>Women's<br>Bags<br>Collection</h3>
+                                <a href="{% url 'category_detail_page' 'handbags' %}" class="btn-shop">Shop now</a>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Men Tab -->
+                  <div class="tab-pane fade" id="mens-content-1883" role="tabpanel" aria-labelledby="mens-tab">
+                    <div class="category-layout">
+                      <div class="categories-section">
+                        <div class="category-headers">
+                          <h4>Clothing</h4>
+                          <h4>Shoes</h4>
+                          <h4>Accessories</h4>
+                          <h4>Special</h4>
+                        </div>
+
+                        <div class="category-links">
+                          <div class="link-row">
+                            <a href="{% url 'category_detail_page' slug='shirts-polos' %}">Shirts &amp; Polos</a>
+                            <a href="{% url 'category_detail_page' slug='sneaker' %}">Sneakers</a>
+                            <a href="{% url 'category_detail_page' slug='Watch' %}">Watches</a>
+                                                        <a href="{% url 'category_detail_page' slug='slim-fit' %}">Slim Fit</a>
+
+                          </div>
+                          <div class="link-row">
+                            <a href="{% url 'category_detail_page' slug='coats-outerwear' %}">Jackets &amp; Coats</a>
+                            <a href="{% url 'category_detail_page' slug='boots' %}">Boots</a>
+                            <a href="{% url 'category_detail_page' slug='belts' %}">Belts</a>
+                            <a href="{% url 'category_detail_page' slug='mens-footwear' %}">Men's Footwear</a>
+                          </div>
+                          <div class="link-row">
+                            <a href="{% url 'category_detail_page' slug='shirts-tops' %}">Shirts &amp; Tops</a>
+                              <a href="{% url 'category_detail_page' 'slipper' %}">Slippers</a>
+                            <a href="{% url 'category_detail_page' slug='extended-sizes' %}">Extended Sizes</a>
+
+                          </div>
+                          <div class="link-row">
+                            <a href="{% url 'category_detail_page' slug='activewears' %}">Activewear</a>
+                              <a href="{% url 'category_detail_page' slug='oxfords' %}">Oxfords</a>
+                            <a href="{% url 'category_detail_page' slug='wallets' %}">Wallets</a>
+                          </div>
+                          <div class="link-row">
+                            <a href="{% url 'category_detail_page' slug='suits' %}">Suits</a>
+                            <a href="{% url 'category_detail_page' slug='sunglasses' %}">Sunglasses</a>
+                          </div>
+                  
+                          <div class="link-row">
+                            <a href="#">View all</a>
+                            <a href="#">View all</a>
+                            <a href="#"></a>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="featured-section">
+                        <div class="featured-image">
+                          <img src="products/img/product/product-m-4.webp" alt="Men's Footwear Collection">
+                          <div class="featured-content">
+                            <h3>Men's<br>Footwear<br>Collection</h3>
+                            <a href="" class="btn-shop">Shop now</a>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>               
+
+                </div>
+
+              </div><!-- End Products Mega Menu 2 Desktop View -->
+
+            </li><!-- End Products Mega Menu 2 -->
+
+            <li><a href="{% url 'contact' %}">Contact</a></li>
+
+          </ul>
+        </nav>
+      </div>
+    </div>
+
+    <!-- Mobile Search Form -->
+    <div class="collapse" id="mobileSearch">
+      <div class="container">
+        <form class="search-form">
+          <div class="input-group">
+            <input type="text" class="form-control" placeholder="Search for products">
+            <button class="btn" type="submit">
+              <i class="bi bi-search"></i>
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+  </header>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<style>
+.product-image {
+  width: 100%;
+  height: 220px;            /* عدل الارتفاع على مزاجك */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #f8f8f8; /* لون خلفية لو الصورة أصغر */
+  overflow: hidden;
+}
+
+.product-image img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;      /* 🔥 ده المهم */
+}
+
+
+</style>

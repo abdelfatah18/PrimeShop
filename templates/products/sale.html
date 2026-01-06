@@ -1,0 +1,124 @@
+<!-- Updated Sale Page Template with Professional English Text and Buttons -->
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<main class="main">
+
+  <!-- Hero Section -->
+  <section id="hero" class="hero section bg-light py-5">
+    <div class="container text-center" data-aos="fade-up">
+      <h1 class="hero-title mb-3">Exclusive Big Sale</h1>
+      <p class="hero-description mb-4">Shop premium products at unbeatable discounts. Limited-time offers—grab your deal now!</p>
+      <div class="hero-actions">
+        <a href="{% url 'product_list' %}" class="btn btn-primary me-2">Browse All Products</a>
+        <a href="{% url 'categories_page' %}" class="btn btn-outline-secondary">Explore Categories</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Sale Products Section -->
+  <section id="sale-products" class="sale-products section py-5">
+    <div class="container" data-aos="fade-up" data-aos-delay="100">
+      <div class="section-title text-center mb-5">
+        <h2>🔥 Hot Deals You Can't Miss</h2>
+        <p>Discover top-selling items at exclusive discounted prices.</p>
+      </div>
+
+      <div class="row g-4">
+        {% for product in sale_products %}
+        <div class="col-lg-3 col-md-4 col-sm-6">
+          <div class="product-card border rounded shadow-sm position-relative overflow-hidden">
+
+            <!-- Product Image -->
+            <div class="product-image position-relative">
+              {% if product.sales_count > 0 %}
+                <span class="badge bg-danger position-absolute top-0 start-0 m-2">Best Seller</span>
+              {% endif %}
+
+              <a href="{% url 'product_detail' product.slug %}">
+                {% if product.image %}
+                  <img src="{{ product.image.url }}" alt="{{ product.name }}" class="img-fluid" style="height:250px; object-fit:cover; width:100%;">
+                {% else %}
+                  <img src="{% static 'products/img/default.jpg' %}" alt="{{ product.name }}" class="img-fluid" style="height:250px; object-fit:cover; width:100%;">
+                {% endif %}
+              </a>
+
+              <!-- Hover Actions -->
+              <div class="product-actions d-flex justify-content-center position-absolute bottom-0 w-100 bg-light bg-opacity-75 py-2 opacity-0 hover-show">
+                <button class="btn btn-sm btn-outline-danger me-1"><i class="bi bi-heart"></i> Wishlist</button>
+                <button class="btn btn-sm btn-outline-secondary me-1"><i class="bi bi-arrow-repeat"></i> Compare</button>
+                <button class="btn btn-sm btn-outline-primary"><i class="bi bi-eye"></i> Quick View</button>
+              </div>
+            </div>
+
+            <!-- Product Info -->
+            <div class="product-info p-3 text-center">
+              <div class="product-category text-muted small mb-1">
+                <a href="{% url 'category_detail_page' slug=product.category.slug %}" class="text-decoration-none text-muted">
+                  {{ product.category.name }}
+                </a>
+              </div>
+
+              <h5 class="product-name mb-2">
+                <a href="{% url 'product_detail' product.slug %}" class="text-decoration-none text-dark">{{ product.name }}</a>
+              </h5>
+
+              <div class="product-price mb-2">
+                {% if product.discount > 0 %}
+                  <span class="text-muted text-decoration-line-through">${{ product.price }}</span>
+                  <span class="text-danger fw-bold ms-2">${{ product.final_price|floatformat:2 }}</span>
+                  <span class="badge bg-success ms-1">-{{ product.discount }}%</span>
+                {% else %}
+                  <span class="fw-bold">${{ product.price }}</span>
+                {% endif %}
+              </div>
+
+              <div class="product-rating mb-2">
+                {% for i in "12345" %}
+                  {% if forloop.counter <= product.sales_count|default:0 %}
+                    <i class="bi bi-star-fill text-warning"></i>
+                  {% else %}
+                    <i class="bi bi-star text-warning"></i>
+                  {% endif %}   
+                {% endfor %}
+                <span class="text-muted">({{ product.sales_count }})</span>
+              </div>
+
+              <a href="{% url 'product_detail' product.slug %}" class="btn btn-dark w-100 rounded-pill py-2">View Details</a>
+            </div>
+
+          </div>
+        </div>
+        {% empty %}
+        <p class="text-center">No discounted products available at the moment.</p>
+        {% endfor %}
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<style>
+.product-card {
+    transition: transform 0.3s, box-shadow 0.3s;
+    cursor: pointer;
+}
+.product-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+}
+.hover-show {
+    transition: opacity 0.3s;
+}
+.product-card:hover .hover-show {
+    opacity: 1;
+}
+.product-image img {
+    transition: transform 0.3s;
+}
+.product-image:hover img {
+    transform: scale(1.05);
+}
+</style>
+{% endblock %}

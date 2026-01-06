@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+{% block content %}
+<main class="main">
+  <div class="container mt-5">
+    <h2>Order #{{ order.id }}</h2>
+    <p><strong>Customer:</strong> {{ order.customer_name }}</p>
+    <p><strong>Date:</strong> {{ order.created_at }}</p>
+
+    <h4>Items</h4>
+    <table class="table table-striped table-bordered align-middle">
+      <thead class="table-dark">
+        <tr>
+          <th>Product</th>
+          <th>Price</th>
+          <th>Quantity</th>
+          <th>Subtotal</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for item in items %}
+        <tr>
+          <!-- اسم المنتج -->
+          <td>{{ item.product.name }}</td>
+
+          <!-- السعر مع الخصم -->
+          <td>
+            {% if item.product.discount > 0 %}
+              <span class="text-muted text-decoration-line-through">
+                ${{ item.product.price|floatformat:2 }}
+              </span>
+              <span class="text-danger fw-bold ms-2">
+                ${{ item.product.final_price|floatformat:2 }}
+              </span>
+            {% else %}
+              ${{ item.product.price|floatformat:2 }}
+            {% endif %}
+          </td>
+
+          <!-- الكمية -->
+          <td>{{ item.quantity }}</td>
+
+          <!-- subtotal -->
+          <td>${{ item.subtotal }}</td>
+        </tr>
+        {% empty %}
+        <tr>
+          <td colspan="4" class="text-center">No items in this order.</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+
+    <h4 class="mt-4">Total: ${{ total_price|floatformat:2 }}</h4>
+  </div>
+</main>
+{% endblock %}

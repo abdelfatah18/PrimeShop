@@ -1,0 +1,615 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+{% load widget_tweaks %}
+
+<main class="main">
+
+<!-- Page Title -->
+<div class="page-title light-background">
+    <div class="container d-lg-flex justify-content-between align-items-center">
+        <h1 class="mb-2 mb-lg-0">{% block title %}Account{% endblock %}</h1>
+        <nav class="breadcrumbs">
+            <ol>
+                <li><a href="{% url 'index' %}">Home</a></li>
+                <li class="current">Account</li>
+            </ol>
+        </nav>
+    </div>
+</div><!-- End Page Title -->
+
+<!-- Account Section -->
+<section id="account" class="account section">
+
+    <div class="container" data-aos="fade-up" data-aos-delay="100">
+
+        <!-- Mobile Menu Toggle -->
+        <div class="mobile-menu d-lg-none mb-4">
+            <button class="mobile-menu-toggle" type="button" data-bs-toggle="collapse" data-bs-target="#profileMenu">
+                <i class="bi bi-grid"></i>
+                <span>Menu</span>
+            </button>
+        </div>
+
+        <div class="row g-4">
+            <!-- Profile Menu -->
+            <div class="col-lg-3">
+                <div class="profile-menu collapse d-lg-block" id="profileMenu">
+                    <!-- User Info -->
+                    <div class="user-info" data-aos="fade-right">
+                        <div class="user-avatar">
+                            {% if request.user.profile_photo %}
+                            <img src="{{ request.user.profile_photo.url }}" alt="Profile" loading="lazy">
+                            <span class="status-badge"><i class="bi bi-shield-check"></i></span>
+                            {% else %}
+                            <img src="{% static 'products/img/default-avatar-profile-icon.jpg' %}" alt="Profile" loading="lazy">
+                            {% endif %}
+                        </div>
+                        <h4>{{user.first_name}}</h4>
+                        <div class="user-status">
+                            <i class="bi bi-award"></i>
+                            <span>Premium Member</span>
+                        </div>
+                    </div>
+
+                    <!-- Navigation Menu -->
+                    <nav class="menu-nav">
+                        <ul class="nav flex-column" role="tablist">
+                            <li class="nav-item">
+                                <a class="nav-link active" data-bs-toggle="tab" href="#orders">
+                                    <i class="bi bi-box-seam"></i>
+                                    <span>My Orders</span>
+                                    <span class="badge">{{ request.user.orders.count }}</span>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" data-bs-toggle="tab" href="#wishlist">
+                                    <i class="bi bi-heart"></i>
+                                    <span>Wishlist</span>
+                                    <span class="badge"> {{ request.user.wishlist_items.count}}</span>
+                                </a>
+                            </li>
+                    
+                            <li class="nav-item">
+                                <a class="nav-link" data-bs-toggle="tab" href="#reviews">
+                                    <i class="bi bi-star"></i>
+                                    <span>My Reviews</span>
+                                </a>
+                            </li>
+                            
+                            <li class="nav-item">
+                                <a class="nav-link" data-bs-toggle="tab" href="#settings">
+                                    <i class="bi bi-gear"></i>
+                                    <span>Account Settings</span>
+                                </a>
+                            </li>
+                        </ul>
+
+                        <div class="menu-footer">
+                            <a href="#" class="help-link">
+                                <i class="bi bi-question-circle"></i>
+                                <span>Help Center</span>
+                            </a>
+                            <a href="#" class="logout-link">
+                                <i class="bi bi-box-arrow-right"></i>
+                                <span>Log Out</span>
+                            </a>
+                        </div>
+                    </nav>
+                </div>
+            </div>
+
+            <!-- Content Area -->
+            <div class="col-lg-9">
+                <div class="content-area">
+                    <div class="tab-content">
+                                    <!-- Orders Tab -->
+                                    <div class="tab-pane fade show active" id="orders">
+                                        <div class="section-header" data-aos="fade-up">
+                                            <h2>My Orders</h2>
+                                            <div class="header-actions">
+                                                <div class="search-box">
+                                                    <input type="text" id="search-input" placeholder="Search orders..." value="{{ request.GET.q }}">
+                                                    <i class="bi bi-search" id="search-btn" style="cursor:pointer;"></i>
+                                                </div>
+
+                                        
+                                            </div>
+                                        </div>
+
+                                        <div class="orders-grid">
+{% for order in page_obj %}
+                                            <div class="order-card" data-aos="fade-up" data-aos-delay="{{ forloop.counter0|add:'100' }}">
+                                                <!-- Order Header -->
+                                                <div class="order-header">
+                                                    <div class="order-id">
+                                                        <span class="label">Order ID:</span>
+                                                        <span class="value">{{ order.id }}</span>
+                                                    </div>
+                                                    <div class="order-date">{{ order.created_at|date:"M d, Y" }}</div>
+                                                </div>
+
+                                                <!-- Order Content -->
+                                                <div class="order-content">
+                                                    <div class="product-grid">
+                                                        {% for item in order.items.all %}
+                                                        <img src="{{ item.product.image.url }}" alt="{{ item.product.name }}" loading="lazy">
+                                                        {% endfor %}
+                                                    </div>
+                                                    <div class="order-info">
+                                                        <div class="info-row">
+                                                            <span>Status</span>
+                                                            <span class="status {{ order.status|lower }}">{{ order.status }}</span>
+                                                        </div>
+                                                        <div class="info-row">
+                                                            <span>Items</span>
+                                                            <span>{{ order.items.count }} {% if order.items.count == 1 %}item{% else %}items{% endif %}</span>
+                                                        </div>
+                                                        <div class="info-row">
+                                                            <span>Total</span>
+                                                            <span class="price">${{ order.total_price }}</span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <!-- Order Footer -->
+                                                <div class="order-footer">
+                                                    <button type="button" class="btn-track" data-bs-toggle="collapse" data-bs-target="#tracking{{ forloop.counter }}" aria-expanded="false">Track Order</button>
+                                                    <a href="{% url 'order_detail_page' order.id %}" class="btn-details">View Details</a>
+                                                </div>
+
+                                                <!-- Order Tracking -->
+                                                <div class="collapse tracking-info" id="tracking{{ forloop.counter }}">
+                                                    {% if order.tracking %}
+                                                    <div class="tracking-timeline">
+                                                        {% for step in order.tracking.steps.all %}
+                                                        <div class="timeline-item {% if step.completed %}completed{% elif step.active %}active{% endif %}">
+                                                            <div class="timeline-icon">
+                                                                <i class="bi {{ step.icon }}"></i>
+                                                            </div>
+                                                            <div class="timeline-content">
+                                                                <h5>{{ step.title }}</h5>
+                                                                <p>{{ step.description }}</p>
+                                                                {% if step.date %}<span class="timeline-date">{{ step.date|date:"M d, Y - h:i A" }}</span>{% endif %}
+                                                            </div>
+                                                        </div>
+                                                        {% endfor %}
+                                                    </div>
+                                                    {% else %}
+                                                    <p>Tracking info will go here...</p>
+                                                    {% endif %}
+                                                </div>
+
+                                                <!-- Order Details -->
+                                                <div class="collapse order-details" id="details{{ forloop.counter }}">
+                                                    {% if order.items.exists %}
+                                                    <div class="details-content">
+                                                        <div class="detail-section">
+                                                            <h5>Order Information</h5>
+                                                            <div class="info-grid">
+                                                                <div class="info-item">
+                                                                    <span class="label">Payment Method</span>
+                                                                    <span class="value">{{ order.payment_method }}</span>
+                                                                </div>
+                                                                <div class="info-item">
+                                                                    <span class="label">Shipping Method</span>
+                                                                    <span class="value">{{ order.shipping_method }}</span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="detail-section">
+                                                            <h5>Items ({{ order.items.count }})</h5>
+                                                            <div class="order-items">
+                                                                {% for item in order.items.all %}
+                                                                <div class="item">
+                                                                    <img src="{{ item.product.image.url }}" alt="{{ item.product.name }}" loading="lazy">
+                                                                    <div class="item-info">
+                                                                        <h6>{{ item.product.name }}</h6>
+                                                                        <div class="item-meta">
+                                                                            <span class="sku">SKU: {{ item.product.sku }}</span>
+                                                                            <span class="qty">Qty: {{ item.quantity }}</span>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="item-price">${{ item.total_price }}</div>
+                                                                </div>
+                                                                {% endfor %}
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="detail-section">
+                                                            <h5>Price Details</h5>
+                                                            <div class="price-breakdown">
+                                                                <div class="price-row">
+                                                                    <span>Subtotal</span>
+                                                                    <span>${{ order.subtotal }}</span>
+                                                                </div>
+                                                                <div class="price-row">
+                                                                    <span>Shipping</span>
+                                                                    <span>${{ order.shipping_cost }}</span>
+                                                                </div>
+                                                                <div class="price-row">
+                                                                    <span>Tax</span>
+                                                                    <span>${{ order.tax }}</span>
+                                                                </div>
+                                                                <div class="price-row total">
+                                                                    <span>Total</span>
+                                                                    <span>${{ order.total_price }}</span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="detail-section">
+                                                            <h5>Shipping Address</h5>
+                                                            <div class="address-info">
+                                                                <p>
+                                                                    {{ order.shipping_address.full_name }}<br>
+                                                                    {{ order.shipping_address.street }}<br>
+                                                                    {{ order.shipping_address.apartment }}<br>
+                                                                    {{ order.shipping_address.city }}, {{ order.shipping_address.state }} {{ order.shipping_address.zip_code }}<br>
+                                                                    {{ order.shipping_address.country }}
+                                                                </p>
+                                                                <p class="contact">{{ order.shipping_address.phone }}</p>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    {% else %}
+                                                    <p>Order details will go here...</p>
+                                                    {% endif %}
+                                                </div>
+                                            </div>
+                                            {% empty %}
+                                            <p>You have no orders yet.</p>
+                                            {% endfor %}
+                                        </div>
+                                        </div>
+                                        
+<!-- Pagination -->
+<div class="pagination-wrapper" data-aos="fade-up">
+
+{% if page_obj.has_previous %}
+    <a href="?page={{ page_obj.previous_page_number }}" class="btn-prev">
+        <i class="bi bi-chevron-left"></i>
+    </a>
+{% else %}
+    <span class="btn-prev disabled">
+        <i class="bi bi-chevron-left"></i>
+    </span>
+{% endif %}
+
+<div class="page-numbers">
+    {% for num in page_obj.paginator.page_range %}
+        {% if page_obj.number == num %}
+            <span class="active">{{ num }}</span>
+        {% else %}
+            <a href="?page={{ num }}">{{ num }}</a>
+        {% endif %}
+    {% endfor %}
+</div>
+
+{% if page_obj.has_next %}
+    <a href="?page={{ page_obj.next_page_number }}" class="btn-next">
+        <i class="bi bi-chevron-right"></i>
+    </a>
+{% else %}
+    <span class="btn-next disabled">
+        <i class="bi bi-chevron-right"></i>
+    </span>
+{% endif %}
+
+</div>
+
+
+                                    <!-- Wishlist Tab -->
+                                    <div class="tab-pane fade" id="wishlist">
+                                        <div class="container my-5">
+                                            <div class="section-header" data-aos="fade-up">
+                                                <h2>My Wishlist</h2>
+                                                <div class="header-actions">
+                                                    <form method="post" action="{% url 'add_all_wishlist_to_cart' %}">
+                                                        {% csrf_token %}
+                                                        <button type="submit" class="btn-add-all">Add All to Cart</button>
+                                                    </form>
+                                                </div>
+                                            </div>
+
+                                            <div class="wishlist-grid">
+                                                {% if request.user.is_authenticated %}
+                                                {% for item in request.user.wishlist_items.all %}
+                                                <div class="wishlist-card" data-aos="fade-up" data-aos-delay="{{ forloop.counter0|add:'100' }}">
+                                                    <div class="wishlist-image">
+                                                        <img src="{{ item.product.image.url }}" alt="{{ item.product.name }}" loading="lazy">
+
+                                                        <form method="post" action="{% url 'remove_from_wishlist' item.id %}">
+                                                            {% csrf_token %}
+                                                            <button class="btn-remove" type="submit" aria-label="Remove from wishlist">
+                                                                <i class="bi bi-trash"></i>
+                                                            </button>
+                                                        </form>
+
+                                                        {% if item.product.discount > 0 %}
+                                                        <div class="sale-badge">-{{ item.product.discount }}%</div>
+                                                        {% endif %}
+                                                        {% if item.product.sizes.exists %}
+                                                        {% if item.out_of_stock %}
+                                                        <div class="out-of-stock-badge">Out of Stock</div>
+                                                        {% endif %}
+                                                        {% endif %}
+                                                    </div>
+
+                                                    <div class="wishlist-content">
+                                                        <h4>{{ item.product.name }}</h4>
+                                                        <div class="product-meta">
+                                                            <div class="rating">
+                                                                {% for _ in "x"|ljust:item.product.full_stars %}
+                                                                <i class="bi bi-star-fill"></i>
+                                                                {% endfor %}
+
+                                                                {% if item.product.half_star %}
+                                                                <i class="bi bi-star-half"></i>
+                                                                {% endif %}
+
+                                                                {% for _ in "x"|ljust:item.product.empty_stars %}
+                                                                <i class="bi bi-star"></i>
+                                                                {% endfor %}
+
+                                                                <span>({{ item.product.review_count }})</span>
+                                                            </div>
+
+                                                            <div class="price">
+                                                                {% if item.product.discount > 0 %}
+                                                                <span class="current">${{ item.product.final_price }}</span>
+                                                                <span class="original">${{ item.product.price }}</span>
+                                                                {% else %}
+                                                                <span class="current">${{ item.product.price }}</span>
+                                                                {% endif %}
+                                                            </div>
+                                                        </div>
+
+                                                        <form method="post" action="{% url 'add_to_cart' item.product.id %}">
+                                                            {% csrf_token %}
+                                                            <button type="submit" class="btn-add-cart">Add to Cart</button>
+                                                        </form>
+                                                    </div>
+                                                </div>
+                                                {% empty %}
+                                                <p class="text-center mt-5">Your wishlist is empty </p>
+                                                {% endfor %}
+                                                {% else %}
+                                                <p class="text-center mt-5">Please <a href="{% url 'login' %}">login</a> to view your wishlist.</p>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                    </div>
+
+
+
+                                    <!-- Reviews Tab -->
+                                    <div class="tab-pane fade" id="reviews">
+                                        <div class="section-header" data-aos="fade-up">
+                                            <h2>My Reviews</h2>
+                                            <div class="header-actions">
+                                                <div class="dropdown">
+                                                    <button class="filter-btn" data-bs-toggle="dropdown">
+                                                        <i class="bi bi-funnel"></i>
+                                                        <span>Sort by: Recent</span>
+                                                    </button>
+                                                    <ul class="dropdown-menu">
+                                                        <li><a class="dropdown-item" href="#">Recent</a></li>
+                                                        <li><a class="dropdown-item" href="#">Highest Rating</a></li>
+                                                        <li><a class="dropdown-item" href="#">Lowest Rating</a></li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="reviews-grid">
+                                        
+                        {% for review in request.user.reviews.all %}
+                        <div class="review-card" data-aos="fade-up">
+
+                                <div class="review-header">
+                                    <img src="{{ review.product.image.url }}" class="product-image">
+
+                                    <div class="review-meta">
+                                        <h4>{{ review.product.name }}</h4>
+
+                                        <div class="rating">
+                                            {% for i in "12345" %}
+                                                {% if forloop.counter <= review.rating %}
+                                                    <i class="bi bi-star-fill"></i>
+                                                {% else %}
+                                                    <i class="bi bi-star"></i>
+                                                {% endif %}
+                                            {% endfor %}
+                                            <span>({{ review.rating }}.0)</span>
+                                        </div>
+
+                                        <div class="review-date">
+                                            Reviewed on {{ review.created_at|date:"M d, Y" }}
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="review-content">
+                                    <p>{{ review.comment }}</p>
+                                </div>
+
+                                <div class="review-footer">
+                                    <a href="{% url 'edit_review' review.id %}" class="btn-edit">Edit Review</a>
+                                    <a href="{% url 'delete_review' review.id %}" class="btn-delete">Delete</a>
+                                </div>
+
+                            </div>
+                        {% empty %}
+                            <p>You haven't written any reviews yet.</p>
+                        {% endfor %}
+                        </div>                                                                
+                        </div>
+
+
+
+                        <!-- Settings Tab -->
+                        <div class="tab-pane fade" id="settings">
+                            <div class="section-header" data-aos="fade-up">
+                                <h2>Account Settings</h2>
+                            </div>
+
+                            <div class="settings-content">
+                                <!-- Personal Information -->
+                <div class="settings-section" data-aos="fade-up">
+<h3>Personal Information</h3>
+<form method="post" class="php-email-form settings-form" enctype="multipart/form-data">
+    {% csrf_token %}
+    <div class="row g-3">
+        <div class="col-md-6">
+            <label for="firstName" class="form-label">First Name</label>
+            <input type="text" class="form-control" id="firstName" name="first_name"
+                    value="{{ user_form.first_name.value }}">
+        </div>
+        <div class="col-md-6">
+            <label for="lastName" class="form-label">Last Name</label>
+            <input type="text" class="form-control" id="lastName" name="last_name"
+                    value="{{ user_form.last_name.value }}">
+        </div>
+        <div class="col-md-6">
+            <label for="email" class="form-label">Email</label>
+            <input type="email" class="form-control" id="email" name="email"
+                    value="{{ user_form.email.value }}">
+        </div>
+        <div class="col-md-6">
+            <label for="phone" class="form-label">Phone</label>
+            <input type="tel" class="form-control" id="phone" name="phone"
+                    value="{{ user_form.phone.value }}">
+        </div>
+    </div>
+
+    <div class="form-buttons mt-3">
+        <button type="submit" class="btn btn-primary btn-save">Save Changes</button>
+    </div>
+
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-success mt-2">{{ message }}</div>
+        {% endfor %}
+    {% endif %}
+</form>
+</div>
+
+
+<div class="settings-section" data-aos="fade-up" data-aos-delay="100">
+<h3>Email Preferences</h3>
+<form method="post">
+    {% csrf_token %}
+    <div class="preferences-list">
+
+        <div class="preference-item form-check form-switch mb-3">
+            {{ pref_form.order_updates }}
+            <div class="preference-info">
+                <h4>Order Updates</h4>
+                <p>Receive notifications about your order status</p>
+            </div>
+            {% if pref_form.order_updates.errors %}
+                <div class="text-danger small">{{ pref_form.order_updates.errors }}</div>
+            {% endif %}
+        </div>
+
+        <div class="preference-item form-check form-switch mb-3">
+            {{ pref_form.promotions }}
+            <div class="preference-info">
+                <h4>Promotions</h4>
+                <p>Receive emails about new promotions and deals</p>
+            </div>
+            {% if pref_form.promotions.errors %}
+                <div class="text-danger small">{{ pref_form.promotions.errors }}</div>
+            {% endif %}
+        </div>
+
+        <div class="preference-item form-check form-switch mb-3">
+            {{ pref_form.newsletter }}
+            <div class="preference-info">
+                <h4>Newsletter</h4>
+                <p>Subscribe to our weekly newsletter</p>
+            </div>
+            {% if pref_form.newsletter.errors %}
+                <div class="text-danger small">{{ pref_form.newsletter.errors }}</div>
+            {% endif %}
+        </div>
+
+    </div>
+
+    <div class="form-buttons">
+        <button type="submit" name="update_preferences" class="btn btn-primary">
+            Save Preferences
+        </button>
+    </div>
+</form>
+</div>
+
+                                <!-- Security Settings -->
+<div class="settings-section" id="preferences" data-aos="fade-up" data-aos-delay="100">
+<h3>Security</h3>
+<form method="post">
+    {% csrf_token %}
+    {{ password_form.non_field_errors }}
+
+    <div class="row g-3 mb-3">
+        <div class="col-md-4">
+            <label for="{{ password_form.old_password.id_for_label }}" class="form-label">
+                {{ password_form.old_password.label }}
+            </label>
+            {{ password_form.old_password|add_class:"form-control" }}
+            {% if password_form.old_password.errors %}
+                <div class="text-danger small">{{ password_form.old_password.errors }}</div>
+            {% endif %}
+        </div>
+
+        <div class="col-md-4">
+            <label for="{{ password_form.new_password1.id_for_label }}" class="form-label">
+                {{ password_form.new_password1.label }}
+            </label>
+            {{ password_form.new_password1|add_class:"form-control" }}
+            {% if password_form.new_password1.errors %}
+                <div class="text-danger small">{{ password_form.new_password1.errors }}</div>
+            {% endif %}
+        </div>
+
+        <div class="col-md-4">
+            <label for="{{ password_form.new_password2.id_for_label }}" class="form-label">
+                {{ password_form.new_password2.label }}
+            </label>
+            {{ password_form.new_password2|add_class:"form-control" }}
+            {% if password_form.new_password2.errors %}
+                <div class="text-danger small">{{ password_form.new_password2.errors }}</div>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="form-buttons">
+        <button type="submit" name="update_password" class="btn btn-primary btn-save">
+            Update Password
+        </button>
+    </div>
+</form>
+</div>
+
+                                <!-- Delete Account -->
+                                <div class="settings-section danger-zone" data-aos="fade-up" data-aos-delay="300">
+                                    <h3>Delete Account</h3>
+                                    <div class="danger-zone-content">
+                                        <p>Once you delete your account, there is no going back. Please be certain.</p>
+                                        <button type="button" class="btn-danger">Delete Account</button>
+                                    </div>
+                                </div>
+                                
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section><!-- /Account Section -->
+</main>
+
+{% endblock %}

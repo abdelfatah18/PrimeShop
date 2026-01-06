@@ -1,0 +1,656 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+
+<div class="container my-5">
+  <div class="row g-4">
+    <!-- قسم الصور والفيديو -->
+    <div class="col-md-6">
+      <div class="position-relative">
+        <!-- الصورة الأساسية - تم تعديل الأبعاد -->
+        <div class="product-main-image-container" style="height: 500px; background-color: #f8f9fa; border-radius: 12px; overflow: hidden; display: flex; align-items: center; justify-content: center;">
+          <img id="mainImg"
+               src="{% if product.image %}{{ product.image.url }}{% else %}{% static 'images/placeholder.png' %}{% endif %}"
+               class="product-main-image"
+               onclick="openAlbum(this.src)"
+               alt="{{ product.name }}"
+               style="max-width: 100%; max-height: 100%; object-fit: contain;">
+        </div>
+
+        <!-- Thumbnails -->
+        <div class="d-flex gap-2 flex-wrap mt-3 justify-content-center">
+          <img src="{% if product.image %}{{ product.image.url }}{% else %}{% static 'images/placeholder.png' %}{% endif %}" 
+               class="thumb-img" 
+               onclick="changeMainImg(this.src)" 
+               alt="Thumbnail 1"
+               style="width: 80px; height: 80px; object-fit: cover; border-radius: 8px; cursor: pointer; border: 2px solid #dee2e6;">
+          {% for img in product.images.all %}
+          <img src="{{ img.image.url }}" 
+               class="thumb-img" 
+               onclick="changeMainImg(this.src)" 
+               alt="Thumbnail {{ forloop.counter|add:1 }}"
+               style="width: 80px; height: 80px; object-fit: cover; border-radius: 8px; cursor: pointer; border: 2px solid #dee2e6;">
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+
+    <!-- قسم تفاصيل المنتج -->
+    <div class="col-md-6">
+      <!-- اسم المنتج -->
+      <h2 class="fw-bold mb-3">{{ product.name }}</h2>
+      <p class="text-muted mb-4">{{ product.description }}</p>
+
+      <!-- السعر -->
+      <div class="mb-4">
+        <h3>
+          {% if product.discount > 0 %}
+            <span class="text-muted text-decoration-line-through me-2">${{ product.price }}</span>
+            <span class="text-danger fw-bold">${{ product.final_price }}</span>
+            <span class="badge bg-danger ms-2">-{{ product.discount }}%</span>
+          {% else %}
+            <span class="fw-bold">${{ product.price }}</span>
+          {% endif %}
+        </h3>
+      </div>
+
+      <!-- المقاسات -->
+      <div class="mb-4">
+        <h6 class="fw-bold mb-3">Available Sizes:</h6>
+        <div class="d-flex flex-wrap gap-2">
+          {% for size in product.sizes.all %}
+            <span class="badge {% if size.in_stock %}bg-dark text-white{% else %}bg-secondary text-light{% endif %} p-2 fs-6">
+              {{ size.size }}
+            </span>
+          {% endfor %}
+        </div>
+      </div>
+
+      <!-- Add to Cart -->
+      <form class="add-to-cart-form mb-4" data-url="{% url 'add_to_cart' product.slug %}">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-dark w-100 rounded-pill py-3">
+          <i class="fas fa-shopping-cart me-2"></i>Add to Cart
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- User Reviews -->
+  <div class="row mt-5">
+    <div class="col-12">
+      <div class="border-top pt-5">
+        <h4 class="fw-bold mb-4">User Reviews ({{ product.reviews.count }})</h4>
+        
+        {% if product.reviews.all %}
+          {% for review in product.reviews.all %}
+            <div class="card mb-3 border-0 shadow-sm">
+              <div class="card-body">
+                <div class="d-flex align-items-center mb-3">
+                  <div class="me-3">
+                    <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center" 
+                         style="width: 50px; height: 50px; font-weight: bold; font-size: 1.2rem;">
+                      {{ review.user.first_name|first|upper }}{{ review.user.last_name|first|upper }}
+                    </div>
+                  </div>
+                  <div class="flex-grow-1">
+                    <div class="d-flex justify-content-between align-items-start">
+                      <div>
+                        <h6 class="mb-1 fw-bold">{{ review.user.first_name }} {{ review.user.last_name }}</h6>
+                        <div class="review-stars mb-1">
+                          {% for i in "12345"|make_list %}
+                            <i class="bi bi-star-fill {% if forloop.counter <= review.rating %}active{% endif %}" 
+                               style="color: {% if forloop.counter <= review.rating %}#ffc107{% else %}#e4e5e9{% endif %}; font-size: 1.2rem;"></i>
+                          {% endfor %}
+                          <span class="ms-2 text-muted">({{ review.rating }}/5)</span>
+                        </div>
+                      </div>
+                      <small class="text-muted">{{ review.created_at|date:"F d, Y" }}</small>
+                    </div>
+                    <p class="mb-0 mt-2">{{ review.comment }}</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          {% endfor %}
+        {% else %}
+          <div class="text-center py-5 border rounded">
+            <i class="far fa-comments fa-3x text-muted mb-3"></i>
+            <h5 class="text-muted mb-2">No reviews yet</h5>
+            <p class="text-muted">Be the first to review this product!</p>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+  <!-- Add Review Form -->
+  <div class="row mt-4">
+    <div class="col-12">
+      <div class="border-top pt-5">
+        <h4 class="fw-bold mb-4">Add Your Review</h4>
+        
+        {% if user.is_authenticated %}
+          <form method="post" id="reviewForm">
+            {% csrf_token %}
+            
+            <!-- نظام النجوم - بالشكل الأصلي -->
+            <div class="mb-3">
+              <label class="form-label fw-bold">Your Rating:</label>
+              
+              <div class="star-rating">
+                {% for i in "12345" %}
+                  <i class="bi bi-star-fill star" data-value="{{ forloop.counter }}"></i>
+                {% endfor %}
+              </div>
+              
+              <input type="hidden" name="rating" id="ratingInput" value="0">
+              <div id="ratingError" class="text-danger small mt-1" style="display: none;">
+                Please select a rating
+              </div>
+              <small class="text-muted d-block mt-2">Click on the stars to rate</small>
+            </div>
+
+            <!-- التعليق -->
+            <div class="mb-4">
+              <label for="comment" class="form-label fw-bold">Your Comment:</label>
+              <textarea name="comment" id="comment" class="form-control" rows="5" 
+                        placeholder="Share your experience with this product..."
+                        style="resize: vertical;" required></textarea>
+              <div id="commentError" class="text-danger small mt-1" style="display: none;">
+                Please provide a comment
+              </div>
+            </div>
+
+            <!-- زر الإرسال -->
+            <button type="submit" class="btn btn-primary px-4 py-2">
+              <i class="fas fa-paper-plane me-2"></i>Submit Review
+            </button>
+            
+            {% if messages %}
+              {% for message in messages %}
+                <div class="alert alert-{{ message.tags }} mt-3">
+                  {{ message }}
+                </div>
+              {% endfor %}
+            {% endif %}
+          </form>
+        {% else %}
+          <div class="alert alert-info">
+            <i class="fas fa-info-circle me-2"></i>
+            Please <a href="{% url 'login' %}?next={{ request.path }}" class="alert-link">login</a> to add a review.
+          </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+  <!-- Related Products -->
+  <div class="row mt-5">
+    <div class="col-12">
+      <div class="border-top pt-5">
+        <h4 class="fw-bold mb-4">People Also Bought</h4>
+        <div class="row">
+          {% for p in related_products %}
+            <div class="col-6 col-md-4 col-lg-3 mb-4">
+              <div class="card product-card h-100 border-0 shadow-sm">
+                <!-- Discount Badge -->
+                {% if p.discount > 0 %}
+                  <div class="position-absolute top-0 end-0 m-2" style="z-index: 10;">
+                    <span class="badge bg-danger rounded-pill">-{{ p.discount }}%</span>
+                  </div>
+                {% endif %}
+                
+                <!-- Product Image Container - تم تعديله -->
+                <a href="{% url 'product_detail' p.slug %}" class="text-decoration-none">
+                  <div class="related-product-image-container" style="height: 250px; background-color: #f8f9fa; overflow: hidden; display: flex; align-items: center; justify-content: center;">
+                    <img src="{% if p.image %}{{ p.image.url }}{% else %}{% static 'images/placeholder.png' %}{% endif %}" 
+                         class="related-product-image"
+                         alt="{{ p.name }}"
+                         style="max-width: 100%; max-height: 100%; object-fit: contain; transition: transform 0.5s ease;">
+                  </div>
+                </a>
+                
+                <!-- Product Info -->
+                <div class="card-body d-flex flex-column">
+                  <h6 class="card-title fw-bold mb-2 text-truncate">
+                    <a href="{% url 'product_detail' p.slug %}" class="text-dark text-decoration-none">
+                      {{ p.name }}
+                    </a>
+                  </h6>
+                  
+                  <div class="mt-auto">
+                    <div class="product-price mb-2">
+                      {% if p.discount > 0 %}
+                        <div class="d-flex align-items-center">
+                          <span class="text-danger fw-bold fs-5">${{ p.final_price }}</span>
+                          <span class="text-muted text-decoration-line-through ms-2 fs-6">${{ p.price }}</span>
+                        </div>
+                      {% else %}
+                        <span class="fw-bold fs-5 text-dark">${{ p.price }}</span>
+                      {% endif %}
+                    </div>
+                    
+                    <a href="{% url 'product_detail' p.slug %}" class="btn btn-outline-dark w-100">
+                      <i class="fas fa-eye me-2"></i>View Details
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          {% empty %}
+            <div class="col-12">
+              <div class="text-center py-4">
+                <p class="text-muted">No related products found.</p>
+              </div>
+            </div>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Album Modal -->
+<div class="modal fade" id="imgModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-xl">
+    <div class="modal-content bg-dark">
+      <div class="modal-header border-0">
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body p-0">
+        <div id="modalCarousel" class="carousel slide" data-bs-ride="carousel">
+          <div class="carousel-inner">
+            <div class="carousel-item active">
+              <div style="height: 70vh; display: flex; align-items: center; justify-content: center;">
+                <img src="{% if product.image %}{{ product.image.url }}{% else %}{% static 'images/placeholder.png' %}{% endif %}" 
+                     class="modal-image"
+                     alt="{{ product.name }}"
+                     style="max-width: 100%; max-height: 100%; object-fit: contain;">
+              </div>
+            </div>
+            {% for img in product.images.all %}
+              <div class="carousel-item">
+                <div style="height: 70vh; display: flex; align-items: center; justify-content: center;">
+                  <img src="{{ img.image.url }}" 
+                       class="modal-image"
+                       alt="Product Image {{ forloop.counter }}"
+                       style="max-width: 100%; max-height: 100%; object-fit: contain;">
+                </div>
+              </div>
+            {% endfor %}
+          </div>
+          
+          <button class="carousel-control-prev" type="button" data-bs-target="#modalCarousel" data-bs-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Previous</span>
+          </button>
+          <button class="carousel-control-next" type="button" data-bs-target="#modalCarousel" data-bs-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Next</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  /* ====== أهم الخصائص التي تؤثر على أبعاد الصور ====== */
+  
+  /* 1. object-fit - خاصية CSS3 تحدد كيف يناسب المحتوى داخل الحاوية */
+  /* القيم الممكنة:
+     - contain: الصورة تظهر بالكامل بدون اقتصاص (قد تظهر مسافات بيضاء)
+     - cover: الصورة تملأ الحاوية بالكامل (قد يتم اقتصاص أجزاء)
+     - fill: الصورة تمتد لتملأ الحاوية (قد تتشوه)
+     - none: تظهر الصورة بحجمها الأصلي
+     - scale-down: تظهر بأصغر حجم بين contain و none
+  */
+  
+  /* حاوية الصورة الرئيسية */
+  .product-main-image-container {
+    aspect-ratio: 1 / 1.25; /* نسبة الطول إلى العرض */
+    max-height: 500px;
+  }
+  
+  .product-main-image {
+    transition: transform 0.3s ease;
+  }
+  
+  .product-main-image:hover {
+    transform: scale(1.05);
+  }
+  
+  /* الصور المصغرة */
+  .thumb-img {
+    transition: all 0.3s ease;
+  }
+  
+  .thumb-img:hover {
+    border-color: #000 !important;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  }
+  
+  /* حاوية صور المنتجات ذات الصلة */
+  .related-product-image-container {
+    aspect-ratio: 1 / 1;
+    background-color: #f8f9fa;
+  }
+  
+  .related-product-image {
+    transition: transform 0.5s ease;
+  }
+  
+  .product-card:hover .related-product-image {
+    transform: scale(1.1);
+  }
+  
+  /* البطاقات */
+  .product-card {
+    transition: all 0.3s ease;
+    overflow: hidden;
+  }
+  
+  .product-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.15) !important;
+  }
+  
+  /* ====== نظام النجوم بالشكل الأصلي ====== */
+  .star-rating {
+    font-size: 28px;
+    color: #ddd;
+    cursor: pointer;
+  }
+  
+  .star-rating .star {
+    margin-right: 8px;
+    transition: all 0.2s ease;
+  }
+  
+  .star-rating .star.active {
+    color: #ffc107; /* أصفر */
+  }
+  
+  .star-rating .star:hover {
+    transform: scale(1.1);
+  }
+  
+  /* التقييمات المعروضة */
+  .review-stars {
+    font-size: 18px;
+  }
+  
+  .review-stars i.active {
+    color: #ffc107; /* أصفر */
+  }
+  
+  /* تحسينات للاستجابة */
+  @media (max-width: 768px) {
+    .product-main-image-container {
+      height: 400px !important;
+    }
+    
+    .thumb-img {
+      width: 60px !important;
+      height: 60px !important;
+    }
+    
+    .related-product-image-container {
+      height: 200px !important;
+    }
+    
+    .star-rating {
+      font-size: 24px !important;
+    }
+  }
+  
+  @media (max-width: 576px) {
+    .product-main-image-container {
+      height: 350px !important;
+    }
+    
+    .related-product-image-container {
+      height: 180px !important;
+    }
+    
+    .star-rating {
+      font-size: 22px !important;
+    }
+  }
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  /* ====== نظام النجوم التفاعلي ====== */
+  const stars = document.querySelectorAll('.star-rating .star');
+  const ratingInput = document.getElementById('ratingInput');
+  const ratingError = document.getElementById('ratingError');
+  
+  if (stars.length > 0 && ratingInput) {
+    // تعيين حدث النقر على النجوم
+    stars.forEach(star => {
+      star.addEventListener('click', function() {
+        const value = parseInt(this.getAttribute('data-value'));
+        setRating(value);
+        ratingError.style.display = 'none';
+      });
+      
+      // تأثير عند المرور على النجوم
+      star.addEventListener('mouseenter', function() {
+        const value = parseInt(this.getAttribute('data-value'));
+        highlightStars(value);
+      });
+      
+      // إعادة النجوم إلى التقييم المحدد عند الخروج
+      star.addEventListener('mouseleave', function() {
+        const currentValue = parseInt(ratingInput.value);
+        highlightStars(currentValue);
+      });
+    });
+    
+    // دالة لتعيين التقييم
+    function setRating(value) {
+      ratingInput.value = value;
+      highlightStars(value);
+    }
+    
+    // دالة لتلوين النجوم
+    function highlightStars(value) {
+      stars.forEach(star => {
+        const starValue = parseInt(star.getAttribute('data-value'));
+        if (starValue <= value) {
+          star.classList.add('active');
+        } else {
+          star.classList.remove('active');
+        }
+      });
+    }
+    
+    // تعيين تقييم افتراضي 0
+    setRating(0);
+  }
+  
+  /* ====== التحقق من نموذج التقييم ====== */
+  const reviewForm = document.getElementById('reviewForm');
+  const commentError = document.getElementById('commentError');
+  
+  if (reviewForm) {
+    reviewForm.addEventListener('submit', function(event) {
+      let isValid = true;
+      
+      // التحقق من اختيار النجوم
+      if (!ratingInput.value || ratingInput.value == '0') {
+        ratingError.style.display = 'block';
+        ratingError.textContent = 'Please select a rating';
+        isValid = false;
+      } else {
+        ratingError.style.display = 'none';
+      }
+      
+      // التحقق من وجود التعليق
+      const commentInput = document.getElementById('comment');
+      if (!commentInput.value.trim()) {
+        commentError.style.display = 'block';
+        commentError.textContent = 'Please provide a comment';
+        isValid = false;
+      } else {
+        commentError.style.display = 'none';
+      }
+      
+      if (!isValid) {
+        event.preventDefault();
+        event.stopPropagation();
+        
+        // التمرير إلى الجزء غير صالح
+        window.scrollTo({
+          top: reviewForm.offsetTop - 100,
+          behavior: 'smooth'
+        });
+      } else {
+        // إضافة رسالة تحميل
+        const submitBtn = reviewForm.querySelector('button[type="submit"]');
+        const originalText = submitBtn.innerHTML;
+        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Submitting...';
+        submitBtn.disabled = true;
+        
+        // إعادة تعيين الزر بعد ثانيتين (في حالة فشل الإرسال)
+        setTimeout(() => {
+          submitBtn.innerHTML = originalText;
+          submitBtn.disabled = false;
+        }, 2000);
+      }
+    });
+  }
+  
+  /* ====== Zoom للصورة الرئيسية ====== */
+  const mainImg = document.getElementById('mainImg');
+  if (mainImg) {
+    mainImg.addEventListener('mousemove', function(e) {
+      const rect = e.target.getBoundingClientRect();
+      const x = ((e.clientX - rect.left) / rect.width) * 100;
+      const y = ((e.clientY - rect.top) / rect.height) * 100;
+      e.target.style.transformOrigin = `${x}% ${y}%`;
+      e.target.style.transform = 'scale(1.5)';
+    });
+
+    mainImg.addEventListener('mouseleave', function(e) {
+      e.target.style.transform = 'scale(1)';
+      e.target.style.transformOrigin = 'center center';
+    });
+  }
+  
+  /* ====== Add to Cart ====== */
+  const addToCartForm = document.querySelector('.add-to-cart-form');
+  if (addToCartForm) {
+    addToCartForm.addEventListener('submit', function(e) {
+      e.preventDefault();
+      
+      const url = this.getAttribute('data-url');
+      const csrfToken = this.querySelector('[name=csrfmiddlewaretoken]').value;
+      const button = this.querySelector('button');
+      const originalHtml = button.innerHTML;
+      
+      button.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Adding...';
+      button.disabled = true;
+      
+      fetch(url, {
+        method: 'POST',
+        headers: {
+          'X-CSRFToken': csrfToken,
+          'X-Requested-With': 'XMLHttpRequest'
+        }
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          button.innerHTML = '<i class="fas fa-check me-2"></i>Added to Cart';
+          button.classList.remove('btn-dark');
+          button.classList.add('btn-success');
+          
+          const cartBadge = document.querySelector('.cart-count');
+          if (cartBadge) {
+            cartBadge.textContent = data.cart_count;
+          }
+          
+          showToast('Product added to cart successfully!', 'success');
+          
+          setTimeout(() => {
+            button.innerHTML = originalHtml;
+            button.disabled = false;
+            button.classList.remove('btn-success');
+            button.classList.add('btn-dark');
+          }, 2000);
+        } else {
+          button.innerHTML = originalHtml;
+          button.disabled = false;
+          showToast(data.message || 'Error adding to cart', 'error');
+        }
+      })
+      .catch(error => {
+        console.error('Error:', error);
+        button.innerHTML = originalHtml;
+        button.disabled = false;
+        showToast('Network error. Please try again.', 'error');
+      });
+    });
+  }
+});
+
+/* ====== وظائف عامة ====== */
+
+// تغيير الصورة الرئيسية
+function changeMainImg(src) {
+  const mainImg = document.getElementById('mainImg');
+  if (mainImg) {
+    mainImg.src = src;
+  }
+}
+
+// فتح الألبوم
+function openAlbum() {
+  const modal = new bootstrap.Modal(document.getElementById('imgModal'));
+  modal.show();
+}
+
+// عرض رسائل Toast
+function showToast(message, type = 'success') {
+  let toastContainer = document.querySelector('.toast-container');
+  if (!toastContainer) {
+    toastContainer = document.createElement('div');
+    toastContainer.className = 'toast-container position-fixed top-0 end-0 p-3';
+    document.body.appendChild(toastContainer);
+  }
+  
+  const toastEl = document.createElement('div');
+  toastEl.className = `toast align-items-center text-white bg-${type === 'success' ? 'success' : 'danger'} border-0`;
+  toastEl.setAttribute('role', 'alert');
+  toastEl.setAttribute('aria-live', 'assertive');
+  toastEl.setAttribute('aria-atomic', 'true');
+  
+  toastEl.innerHTML = `
+    <div class="d-flex">
+      <div class="toast-body">
+        <i class="fas ${type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle'} me-2"></i>
+        ${message}
+      </div>
+      <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+    </div>
+  `;
+  
+  toastContainer.appendChild(toastEl);
+  
+  const toast = new bootstrap.Toast(toastEl, {
+    autohide: true,
+    delay: 3000
+  });
+  toast.show();
+  
+  toastEl.addEventListener('hidden.bs.toast', function() {
+    toastEl.remove();
+  });
+}
+</script>
+
+{% endblock %}

@@ -1,0 +1,170 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+
+<main class="main">
+
+  <!-- Page Title -->
+  <div class="page-title light-background">
+    <div class="container d-lg-flex justify-content-between align-items-center">
+      <h1 class="mb-2 mb-lg-0">{% block title %}About Us{% endblock %}</h1>     
+      <nav class="breadcrumbs">
+        <ol>
+          <li><a href="{% url 'index' %}">Home</a></li>
+          <li class="current">About</li>
+        </ol>
+      </nav>
+    </div>
+  </div><!-- End Page Title -->
+
+  <!-- About Section -->
+  <section id="about-2" class="about-2 section">
+    <div class="container" data-aos="fade-up" data-aos-delay="100">
+      <span class="section-badge"><i class="bi bi-info-circle"></i> Who We Are</span>
+      <div class="row">
+        <div class="col-lg-6">
+          <h2 class="about-title">We Bring You Quality & Style at the Best Prices</h2>
+          <p class="about-description">
+            At <strong>Outfitly</strong>, we believe that online shopping should be simple, enjoyable, and trustworthy.
+            That’s why we provide a wide range of fashion, electronics, and home products carefully selected
+            for quality, style, and value.
+          </p>
+        </div>
+        <div class="col-lg-6">
+          <p class="about-text">
+            From local brands to global favorites, our catalog is constantly updated to keep up with the latest trends.
+            We focus on providing an easy and secure shopping experience — from browsing to checkout and delivery.
+          </p>
+          <p class="about-text">
+            With a passionate team behind the scenes, we’re here to make sure every customer enjoys smooth service,
+            fast delivery, and 100% satisfaction with every order.
+          </p>
+        </div>
+      </div>
+
+      <div class="row features-boxes gy-4 mt-3">
+        <div class="col-lg-4" data-aos="fade-up" data-aos-delay="200">
+          <div class="feature-box">
+            <div class="icon-box"><i class="bi bi-truck"></i></div>
+            <h3><a href="#" class="stretched-link">Fast & Reliable Delivery</a></h3>
+            <p>Enjoy same-day or next-day delivery in major cities with real-time order tracking.</p>
+          </div>
+        </div>
+
+        <div class="col-lg-4" data-aos="fade-up" data-aos-delay="300">
+          <div class="feature-box">
+            <div class="icon-box"><i class="bi bi-shield-check"></i></div>
+            <h3><a href="#" class="stretched-link">Secure Shopping</a></h3>
+            <p>We use the latest encryption and payment technologies to protect your information.</p>
+          </div>
+        </div>
+
+        <div class="col-lg-4" data-aos="fade-up" data-aos-delay="400">
+          <div class="feature-box">
+            <div class="icon-box"><i class="bi bi-heart"></i></div>
+            <h3><a href="#" class="stretched-link">Customer First</a></h3>
+            <p>Your happiness is our priority. We offer easy returns and 24/7 support for all your needs.</p>
+          </div>
+        </div>
+      </div>
+
+
+  </section><!-- /About Section -->
+
+  <!-- Stats Section -->
+  <section id="stats" class="stats section light-background">
+    <div class="container" data-aos="fade-up" data-aos-delay="100">
+      <div class="row gy-4 text-center">
+        <div class="col-lg-3 col-md-6">
+          <div class="stats-item">
+            <i class="bi bi-bag-check"></i>
+            <span data-purecounter-start="0" data-purecounter-end="12000" data-purecounter-duration="1" class="purecounter"></span>
+            <p><strong>Products Sold</strong><br><span>and counting</span></p>
+          </div>
+        </div>
+
+        <div class="col-lg-3 col-md-6">
+          <div class="stats-item">
+            <i class="bi bi-emoji-smile"></i>
+            <span data-purecounter-start="0" data-purecounter-end="8500" data-purecounter-duration="1" class="purecounter"></span>
+            <p><strong>Happy Customers</strong><br><span>trusted by thousands</span></p>
+          </div>
+        </div>
+
+        <div class="col-lg-3 col-md-6">
+          <div class="stats-item">
+            <i class="bi bi-truck"></i>
+            <span data-purecounter-start="0" data-purecounter-end="500" data-purecounter-duration="1" class="purecounter"></span>
+            <p><strong>Cities Covered</strong><br><span>nationwide delivery</span></p>
+          </div>
+        </div>
+
+        <div class="col-lg-3 col-md-6">
+          <div class="stats-item">
+            <i class="bi bi-people"></i>
+            <span data-purecounter-start="0" data-purecounter-end="150" data-purecounter-duration="1" class="purecounter"></span>
+            <p><strong>Dedicated Team</strong><br><span>working for you</span></p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section><!-- /Stats Section -->
+
+  <!-- Testimonials Section -->
+  <section id="testimonials" class="testimonials section">
+    <div class="container">
+      <div class="testimonial-masonry">
+        <div class="testimonial-item" data-aos="fade-up">
+          <div class="testimonial-content">
+            <div class="quote-pattern"><i class="bi bi-quote"></i></div>
+            <p>“Amazing shopping experience! Fast delivery and great prices. My go-to online store!”</p>
+            <div class="client-info">
+              <div class="client-image">
+                <img src="{% static 'products/img/person/person-f-7.webp' %}" alt="Client">
+              </div>
+              <div class="client-details">
+                <h3>Sarah Ahmed</h3>
+                <span class="position">Verified Buyer</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="testimonial-item highlight" data-aos="fade-up" data-aos-delay="100">
+          <div class="testimonial-content">
+            <div class="quote-pattern"><i class="bi bi-quote"></i></div>
+            <p>“Outfitly has the best customer support! They replaced my item within two days — hassle-free.”</p>
+            <div class="client-info">
+              <div class="client-image">
+                <img src="{% static 'products/img/person/person-m-8.webp' %}" alt="Client">
+              </div>
+              <div class="client-details">
+                <h3>Mohamed Ali</h3>
+                <span class="position">Frequent Shopper</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="testimonial-item" data-aos="fade-up" data-aos-delay="200">
+          <div class="testimonial-content">
+            <div class="quote-pattern"><i class="bi bi-quote"></i></div>
+            <p>“Great variety of products and genuine quality. I always find what I need here.”</p>
+            <div class="client-info">
+              <div class="client-image">
+                <img src="{% static 'products/img/person/person-f-8.webp' %}" alt="Client">
+              </div>
+              <div class="client-details">
+                <h3>Lina Nasser</h3>
+                <span class="position">Fashion Enthusiast</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section><!-- /Testimonials Section -->
+
+</main>
+
+{% endblock %}

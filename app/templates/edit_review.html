@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-5">
+
+    <h2>Edit Your Review</h2>
+
+    <div class="review-card">
+        <div class="review-header">
+            <h4>{{ review.product.name }}</h4>
+
+            <div class="rating">
+                {% for i in "12345" %}
+                    {% if forloop.counter <= review.rating %}
+                        <i class="bi bi-star-fill"></i>
+                    {% else %}
+                        <i class="bi bi-star"></i>
+                    {% endif %}
+                {% endfor %}
+                <span>({{ review.rating }}.0)</span>
+            </div>
+        </div>
+
+        <div class="review-content mt-3">
+            <form method="post">
+                {% csrf_token %}
+                <div class="mb-3">
+                    <label for="id_rating" class="form-label">Rating</label>
+                    {{ form.rating }}
+                </div>
+                <div class="mb-3">
+                    <label for="id_comment" class="form-label">Comment</label>
+                    {{ form.comment }}
+                </div>
+                <button type="submit" class="btn btn-primary">Save Changes</button>
+                <a href="{% url 'my_account' %}" class="btn btn-secondary">Cancel</a>
+            </form>
+        </div>
+    </div>
+
+</div>
+{% endblock %}

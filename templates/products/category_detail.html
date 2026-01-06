@@ -1,0 +1,152 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-5">
+  <h1 class="text-center mb-5 text-primary fw-bold">{{ category.name }}</h1>
+
+  {% if products %}
+  <div class="row justify-content-center">
+    {% for product in products %}
+      <div class="col-md-3 col-sm-6 mb-4">
+        <div class="card product-card shadow-sm border-0 h-100">
+      <div class="position-relative">
+  <a href="{% url 'product_detail' product.slug %}">
+    {% if product.image %}
+      <img src="{{ product.image.url }}" class="card-img-top product-img" alt="{{ product.name }}">
+    {% else %}
+      <img src="{% static 'images/default.jpg' %}" class="card-img-top product-img" alt="No image available">
+    {% endif %}
+  </a>
+  <span class="price-badge">${{ product.final_price }}</span>
+</div>
+
+          <div class="card-body text-center">
+            <h5 class="card-title fw-semibold">{{ product.name }}</h5>
+            
+            <div class="d-flex justify-content-center gap-2 mt-3">
+              <a href="{% url 'product_detail' product.slug %}" class="btn btn-outline-secondary btn-sm">View Details</a>
+<form class="add-to-cart-form"
+      data-url="{% url 'add_to_cart' product.slug %}">
+  {% csrf_token %}
+  <button type="submit" class="btn btn-primary btn-sm">
+    <i class="bi bi-cart-plus"></i> Add to Cart
+  </button>
+</form>
+
+
+            </div>
+          </div>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+  {% else %}
+    <p class="text-center text-muted fs-5">No products available in this category yet 💤</p>
+  {% endif %}
+</div>
+
+<script>
+
+const addToCartForms = document.querySelectorAll('.add-to-cart-form');
+
+addToCartForms.forEach(form => {
+  form.addEventListener('submit', function(e) {
+    e.preventDefault();
+
+    const url = this.getAttribute('data-url');
+    const csrfToken = this.querySelector('[name=csrfmiddlewaretoken]').value;
+    const button = this.querySelector('button');
+    const originalHtml = button.innerHTML;
+
+    button.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Adding...';
+    button.disabled = true;
+
+    fetch(url, {
+      method: 'POST',
+      headers: {
+        'X-CSRFToken': csrfToken,
+        'X-Requested-With': 'XMLHttpRequest'
+      }
+    })
+    .then(res => res.json())
+    .then(data => {
+      if (data.success) {
+        button.innerHTML = '✔ Added';
+        button.classList.remove('btn-primary');
+        button.classList.add('btn-success');
+
+        const cartBadge = document.querySelector('.cart-count');
+        if (cartBadge) {
+          cartBadge.textContent = data.cart_count;
+        }
+
+        setTimeout(() => {
+          button.innerHTML = originalHtml;
+          button.disabled = false;
+          button.classList.remove('btn-success');
+          button.classList.add('btn-primary');
+        }, 1500);
+      } else {
+        button.innerHTML = originalHtml;
+        button.disabled = false;
+        alert(data.message || 'Error adding to cart');
+      }
+    })
+    .catch(() => {
+      button.innerHTML = originalHtml;
+      button.disabled = false;
+      alert('Network error');
+    });
+  });
+});
+</script>
+<style>
+  .product-card {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border-radius: 15px;
+    overflow: hidden;
+  }
+
+  .product-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+  }
+
+.product-img {
+  height: 100%;
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  padding: 20px;
+  transition: transform 0.5s ease;
+  /* إصلاح: إزالة opacity هنا */
+  opacity: 1 !important;
+}
+
+  
+  .price-badge {
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+    background: #007bff;
+    color: #fff;
+    padding: 5px 10px;
+    border-radius: 10px;
+    font-size: 0.9rem;
+  }
+
+  .btn {
+    border-radius: 20px;
+    transition: all 0.3s ease;
+  }
+
+  .btn:hover {
+    transform: scale(1.05);
+  }
+</style>
+
+
+
+
+{% endblock %}

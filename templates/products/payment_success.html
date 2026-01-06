@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+{% block content %}
+<main class="main">
+  <div class="container mt-5" style="max-width: 700px; text-align: center;">
+
+    <!-- أيقونة نجاح -->
+    <div style="font-size: 60px; color: #4CAF50; margin-bottom: 20px;">
+      &#10004;
+    </div>
+
+    <h2>Payment Successful!</h2>
+    <p class="mb-4">Thank you for your payment. Your order has been completed successfully.</p>
+
+
+
+    <!-- أزرار للعودة -->
+    <div class="mt-4">
+          <div style="margin-top: 30px;">
+            <a href="{% url 'index' %}" style="display: inline-block; padding: 12px 25px; background: #4CAF50; color: #fff; border-radius: 5px; text-decoration: none; font-weight: bold;">
+                Back to Home
+            </a>
+            <a href="{% url 'my_orders_page' %}" style="display: inline-block; padding: 12px 25px; margin-left: 15px; background: #2196F3; color: #fff; border-radius: 5px; text-decoration: none; font-weight: bold;">
+                View Orders
+            </a>
+        </div>
+    </div>
+  </div>
+</main>
+{% endblock %}

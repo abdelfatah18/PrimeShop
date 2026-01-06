@@ -1,0 +1,16 @@
+<div class="row g-4">
+  {% for product in products %}
+    <div class="col-6 col-md-3">
+      <div class="card h-100">
+        {% if product.image %}
+          <img src="{{ product.image.url }}" class="card-img-top" alt="{{ product.name }}">
+        {% endif %}
+        <div class="card-body">
+          <h5 class="card-title">{{ product.name }}</h5>
+          <p class="card-text">${{ product.final_price }}</p>
+          <a href="{% url 'product_detail' product.slug %}" class="btn btn-dark w-100">View</a>
+        </div>
+      </div>
+    </div>
+  {% endfor %}
+</div>

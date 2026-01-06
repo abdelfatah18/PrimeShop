@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-5">
+  <h1 class="text-center mb-4">🛍️ Categories</h1>
+
+  <div class="row">
+    {% for category in categories %}
+      <div class="col-md-4 mb-4">
+        <div class="card shadow-sm h-100 border-0">
+          <div class="card-body text-center">
+            <h5 class="card-title text-primary fw-bold">
+              <a href="{% url 'category_detail_page' category.slug %}" class="text-decoration-none text-dark">
+                {{ category.name }}
+              </a>
+            </h5>
+            <p class="card-text text-muted">{{ category.description }}</p>
+            <a href="{% url 'category_detail_page' category.slug %}" class="btn btn-outline-primary mt-2">
+              View Products
+            </a>
+          </div>
+        </div>
+      </div>
+    {% empty %}
+      <p class="text-center text-muted">No categories available yet 💤</p>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}

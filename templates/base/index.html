@@ -1,0 +1,748 @@
+{% extends 'base.html' %}
+
+{%load static%}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta content="width=device-width, initial-scale=1.0" name="viewport">
+  <title>Index - NiceShop Bootstrap Template</title>
+  <meta name="description" content="">
+  <meta name="keywords" content="">
+
+
+
+  <!-- =======================================================
+  * Template Name: NiceShop
+  * Template URL: https://bootstrapmade.com/niceshop-bootstrap-ecommerce-template/
+  * Updated: Aug 26 2025 with Bootstrap v5.3.7
+  * Author: BootstrapMade.com
+  * License: https://bootstrapmade.com/license/
+  ======================================================== -->
+</head>
+
+<body class="index-page">   
+
+{% block content %}
+
+  <main class="main">
+
+    <!-- Hero Section -->
+    <section id="hero" class="hero section">
+
+      <div class="hero-container">
+        <div class="hero-content">
+          <div class="content-wrapper" data-aos="fade-up" data-aos-delay="100">
+            <h1 class="hero-title">Discover Amazing Products</h1>
+            <p class="hero-description">Explore our curated collection of premium items designed to enhance your lifestyle. From fashion to tech, find everything you need with exclusive deals and fast shipping.</p>
+            <div class="hero-actions" data-aos="fade-up" data-aos-delay="200">
+              <a href="{% url 'product_list' %}" class="btn-primary">Shop Now</a>
+              <a href="{% url 'categories_page' %}" class="btn-secondary">Browse Categories</a>
+            </div>
+            <div class="features-list" data-aos="fade-up" data-aos-delay="300">
+              <div class="feature-item">
+                <i class="bi bi-truck"></i>
+                <span>Free Shipping</span>
+              </div>
+              <div class="feature-item">
+                <i class="bi bi-award"></i>
+                <span>Quality Guarantee</span>
+              </div>
+              <div class="feature-item">
+                <i class="bi bi-headset"></i>
+                <span>24/7 Support</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="hero-visuals">
+          <div class="product-showcase" data-aos="fade-left" data-aos-delay="200">
+            <div class="product-card featured">
+              <a href="{% url 'product_detail' 'premium-wireless-headphones' %}" >
+              <img src="{% static 'products/img/product/product-2.webp' %}" alt="Featured Product" class="img-fluid">
+              <div class="product-badge">Best Seller</div>
+              <div class="product-info">
+                <h4>Premium Wireless Headphones</h4>
+                <div class="price">
+                  <span class="sale-price">$299</span>
+                  <span class="original-price">$399</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="product-grid">
+              <div class="product-mini" data-aos="zoom-in" data-aos-delay="400">
+                    <a href="{% url 'product_detail' '3pcs-square-minimalist-classic-eyeglasses-fashion-versatile-style' %}">
+
+          <img src="{% static 'products/img/product/product-3.webp' %}" alt="Featured Product" class="img-fluid">
+                <span class="mini-price">$90</span>
+              </div>
+              <div class="product-mini" data-aos="zoom-in" data-aos-delay="500">
+                      <a href="{% url 'product_detail' 'womens-shoes-with-back-bow-ankle-strap-buckle-and-3cm-wide-heel' %}">
+
+          <img src="{% static 'products/img/product/product-5.webp' %}" alt="Featured Product" class="img-fluid">
+                <span class="mini-price">$149</span>
+              </div>
+            </div>
+          </div>
+
+     <div class="floating-elements">
+
+    <!-- Cart -->
+    <a href="{% url 'cart_view' %}">
+      <div class="floating-icon cart" data-aos="fade-up" data-aos-delay="600">
+        <i class="bi bi-cart3"></i>
+        <span class="notification-dot">3</span>
+      </div>
+    </a>
+
+    <!-- Wishlist -->
+    <a href="{% url 'wishlist_page' %}">
+      <div class="floating-icon wishlist" data-aos="fade-up" data-aos-delay="700">
+        <i class="bi bi-heart"></i>
+      </div>
+    </a>
+
+   
+</div>
+
+
+    </section><!-- /Hero Section -->
+
+    <!-- Promo Cards Section -->
+    <section id="promo-cards" class="promo-cards section">
+      <div class="container" data-aos="fade-up" data-aos-delay="100">
+        <div class="row gy-4">
+
+          <div class="col-lg-6">
+            <div class="category-featured" data-aos="fade-right" data-aos-delay="200">
+              <div class="category-image">
+                <img src="{% static 'products/img/product/product-f-2.webp' %}" alt="Featured Product" class="img-fluid">
+
+              </div>
+              <div class="category-content">
+                <span class="category-tag">Trending Now</span>
+                <h2>New Summer Collection</h2>
+                <p>Discover our latest arrivals designed for the modern lifestyle. Elegant, comfortable, and sustainable fashion for every occasion.</p>
+                <a href="{% url 'new_arrivals_page' %}" class="btn-shop">Explore <i class="bi bi-arrow-right"></i></a>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-lg-6">
+
+            <div class="row gy-4">
+
+              <div class="col-xl-6">
+                <div class="category-card cat-men" data-aos="fade-up" data-aos-delay="300">
+                  <div class="category-image">
+                          <img src="{% static 'products/img/product/product-m-5.webp' %}" alt="Featured Product" class="img-fluid">
+
+                  </div>
+                   <div class="category-content">
+                    <h4> Women's Wear</h4>
+                    <p>242 products</p>
+                   <a href="{% url 'women_page' %}">Shop Now <i class="bi bi-arrow-right"></i></a>
+                  </div> 
+                </div>
+              </div>
+
+              <div class="col-xl-6">
+                <div class="category-card cat-kids" data-aos="fade-up" data-aos-delay="400">
+                  <div class="category-image">
+                        <img src="{% static 'products/img/product/product-8.webp' %}" alt="Featured Product" class="img-fluid">
+
+                  </div>
+                  <div class="category-content">
+                    <h4>Men's Wear</h4>
+                    <p>185 products</p>
+                    <a href="{% url 'men_page' %}" class="card-link">Shop Now <i class="bi bi-arrow-right"></i></a>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-xl-6">
+                <div class="category-card cat-cosmetics" data-aos="fade-up" data-aos-delay="500">
+                  <div class="category-image">
+                         <img src="{% static 'products/img/product/product-3.webp' %}" alt="Featured Product" class="img-fluid">
+
+                  </div>
+                  <div class="category-content">
+                    <h4>Beauty Products</h4>
+                    <p>127 products</p>
+                    <a href="{% url 'beauty_product' %}" class="card-link">Shop Now <i class="bi bi-arrow-right"></i></a>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-xl-6">
+                <div class="category-card cat-accessories" data-aos="fade-up" data-aos-delay="600">
+                  <div class="category-image">
+                        <img src="{% static 'products/img/product/product-12.webp' %}" alt="Featured Product" class="img-fluid">
+                  </div>
+                  <div class="category-content">
+                    <h4>Accessories</h4>
+                    <p>308 products</p>
+                    <a href="{%url 'category_detail_page' 'accessories' %}" class="card-link">Shop Now <i class="bi bi-arrow-right"></i></a>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+    </section><!-- /Promo Cards Section -->
+
+    <!-- Best Sellers Section -->
+    <section id="best-sellers" class="best-sellers section">
+
+      <!-- Section Title -->
+      <div class="container section-title" data-aos="fade-up">
+        <h2>Best Sellers</h2>
+        <p>Necessitatibus eius consequatur ex aliquid fuga eum quidem sint consectetur velit</p>
+      </div><!-- End Section Title -->
+
+      <div class="container" data-aos="fade-up" data-aos-delay="100">
+
+        <div class="row g-5">
+
+          <!-- Product 1 -->
+          <div class="col-lg-3 col-md-6">
+            <div class="product-item">
+              <div class="product-image">
+                <div class="product-badge">Limited</div>
+                        <img src="{% static 'products/img/pro-1.webp' %}" alt="Featured Product" class="img-fluid">
+      
+             <a href="{% url 'product_detail' slug='ferragamo-womens-hug-soft-bicolor-shoulder-bag' %}"><button class="cart-btn">View details</button></a>   
+              </div>
+              <div class="product-info">
+                                <div class="product-category"></div>
+
+                <div class="product-category"><a href= "{% url 'category_detail_page' slug='handbags' %}" >Handbags Collection</a> </div>
+                <h4 class="product-name"><a href="{% url 'product_detail' slug='ferragamo-womens-hug-soft-bicolor-shoulder-bag' %}">Ferragamo - Women's Hug Soft Bicolor Shoulder Bag</a></h4>
+                <div class="product-rating">
+                  <div class="stars">
+                    <i class="bi bi-star-fill"></i>
+                    <i class="bi bi-star-fill"></i>
+                    <i class="bi bi-star-fill"></i>
+                    <i class="bi bi-star-fill"></i>
+                    <i class="bi bi-star"></i>
+                  </div>
+                  <span class="rating-count">(2)</span>
+                </div>
+                <div class="product-price">$70.00</div>
+          
+              </div>
+            </div>
+          </div>
+          <!-- End Product 1 -->
+
+          <!-- Product 2 -->
+          <div class="col-lg-3 col-md-6">
+            <div class="product-item">
+              <div class="product-image">
+                       <img src="{% static 'products/img/product/product-4.webp' %}"  alt="Product Image" class="img-fluid" loading="lazy">
+
+                <div class="product-actions">
+               
+                </div>
+                  <a href="{% url 'product_detail' slug='hoodie-casual' %}"><button class="cart-btn">View details</button></a>   
+
+              </div>
+              <div class="product-info">
+                <div class="product-category"><a href= "{% url 'bestsellers_page' %}" >  Best Sellers </a> </div>
+                <h4 class="product-name"><a href="{% url 'product_detail' slug='hoodie-casual' %}"> Hoodie casual </a></h4>
+                <div class="product-rating">
+                  <div class="stars">
+                    <i class="bi bi-star-fill"></i>
+                    <i class="bi bi-star-fill"></i>
+                    <i class="bi bi-star-fill"></i>
+                    <i class="bi bi-star-fill"></i>
+                    <i class="bi bi-star-half"></i>
+                  </div>
+                  <span class="rating-count"></span>
+                </div>
+                <div class="product-price">
+                  <span class="old-price">$240.00</span>
+                  <span class="current-price">$70</span>
+                </div>
+          
+              </div>
+            </div>
+          </div>
+          <!-- End Product 2 -->
+
+          <!-- Product 3 -->
+          <div class="col-lg-3 col-md-6">
+            <div class="product-item">
+              <div class="product-image">
+                       <img src="{% static 'products/img/pro-4.jpg' %}"  alt="Product Image" class="img-fluid" loading="lazy">
+
+                
+                <div class="product-actions">
+            
+                </div>
+                <button class="cart-btn"><a href="{% url 'product_detail' slug='sofa-beech-wood-width-210cm-depth-80cm-height-80cm-off-white' %}"> View details </a> </button>
+              </div>
+              <div class="product-info">
+                <div class="product-category"><a href= "{% url 'new_arrivals_page' %}" >  New Arrivals </a> </div>
+                <h4 class="product-name"><a href="{% url 'product_detail' slug='sofa-beech-wood-width-210cm-depth-80cm-height-80cm-off-white' %}">Sofa Beech Wood Width 210cm Depth 80cm Height 80cm - Off White</a></h4>
+                <div class="product-rating">
+                  <div class="stars">
+                    <i class="bi bi-star-fill"></i>
+                    <i class="bi bi-star-fill"></i>
+                    <i class="bi bi-star-fill"></i>
+                    <i class="bi bi-star"></i>
+                    <i class="bi bi-star"></i>
+                  </div>
+                  <span class="rating-count">(12)</span>
+                </div>
+                <div class="product-price">$95.00</div>
+            
+              </div>
+            </div>
+          </div>
+          <!-- End Product 3 -->
+
+          <!-- Product 4 -->
+          <div class="col-lg-3 col-md-6">
+            <div class="product-item">
+              <div class="product-image">
+                <div class="product-badge trending-badge">Trending</div>
+                       <img src="{% static 'products/img/pro-3.jpg' %}"  alt="Product Image" class="img-fluid" loading="lazy">
+                <div class="product-actions">
+            
+                </div>
+                <button class="cart-btn"> <a href="{% url 'product_detail' slug='mobaco-men-regular-fit-polo-shirt-so100' %}">View details </a> </button>
+              </div>
+              <div class="product-info">
+                <div class="product-category"> <a href="{% url 'men_page' %}">Men's Products </a></div>
+                <h4 class="product-name"><a href="{% url 'product_detail' slug='mobaco-men-regular-fit-polo-shirt-so100' %}">Mobaco Men Regular Fit Polo Shirt SO100</a></h4>
+                <div class="product-rating">
+                  <div class="stars">
+                    <i class="bi bi-star-fill"></i>
+                    <i class="bi bi-star-fill"></i>
+                    <i class="bi bi-star-fill"></i>
+                    <i class="bi bi-star-fill"></i>
+                    <i class="bi bi-star-fill"></i>
+                  </div>
+                  <span class="rating-count">(56)</span>
+                </div>
+                <div class="product-price">$165.00</div>
+         
+              </div>
+            </div>
+          </div>
+          <!-- End Product 4 -->
+
+        </div>
+
+      </div>
+
+    </section><!-- /Best Sellers Section -->
+
+
+
+
+
+    <!-- Cards Section -->
+    <section id="cards" class="cards section">
+
+      <div class="container" data-aos="fade-up" data-aos-delay="100">
+
+        <div class="row gy-4">
+          <div class="col-lg-4 col-md-6 mb-5 mb-md-0" data-aos="fade-up" data-aos-delay="200">
+            <div class="product-category">
+              <h3 class="category-title">
+                <i class="bi bi-fire"></i> Trending Now
+              </h3>
+              <div class="product-list">
+                <div class="product-card">
+                  <div class="product-image">
+                      <a href="{%url 'product_detail' slug='vsling-small-leather-shoulder-bag' %}"> <img src="{% static 'products/img/pro.avif' %}"  alt="Product Image" class="img-fluid" loading="lazy"> </a> 
+                    <div class="product-badges">
+                      <span class="badge-new">New</span>
+                    </div>
+                  </div>
+                  <div class="product-info">
+                    <h4 class="product-name">VSling Small leather shoulder bag </h4>
+                    <div class="product-rating">
+                      <i class="bi bi-star-fill"></i>
+                      <i class="bi bi-star-fill"></i>
+                      <i class="bi bi-star-fill"></i>
+                      <i class="bi bi-star-fill"></i>
+                      <i class="bi bi-star-half"></i>
+                      <span>(24)</span>
+                    </div>
+                    <div class="product-price">
+                      <span class="current-price">$90.0</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="product-card">
+                  <div class="product-image">
+          <a href="{%url 'product_detail' slug='3pcs-square-minimalist-classic-eyeglasses' %}"><img src="{% static 'products/img/product/product-3.webp' %}"  alt="Product Image" class="img-fluid" loading="lazy"></a> 
+                  </div>
+                  <div class="product-info">
+                    <h4 class="product-name">3pcs Square Minimalist Classic Eyeglasses</h4>
+                    <div class="product-rating">
+                      <i class="bi bi-star-fill"></i>
+                      <i class="bi bi-star-fill"></i>
+                      <i class="bi bi-star-fill"></i>
+                      <i class="bi bi-star-fill"></i>
+                      <i class="bi bi-star-fill"></i>
+                      <span>(41)</span>
+                    </div>
+                    <div class="product-price">
+                      <span class="current-price">$90.0</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="product-card">
+                  <div class="product-image">
+          <a href="{%url 'product_detail' slug='hills-womens-sandal-heel-5-cm-different-colors-and-sizes-to-choose-and-order' %}"><img src="{% static 'products/img/pro-20.jpg' %}"  alt="Product Image" class="img-fluid" loading="lazy"></a> 
+                  </div>
+                  <div class="product-info">
+                    <h4 class="product-name">Hills Women's Sandal Heel 5 cm Different Colors And Sizes To Choose And Order</h4>
+                    <div class="product-rating">
+                      <i class="bi bi-star-fill"></i>
+                      <i class="bi bi-star-fill"></i>
+                      <i class="bi bi-star-fill"></i>
+                      <i class="bi bi-star-fill"></i>
+                      <i class="bi bi-star"></i>
+                      <span>(18)</span>
+                    </div>
+                    <div class="product-price">
+                      <span class="current-price">$60.00</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-lg-4 col-md-6 mb-5 mb-md-0" data-aos="fade-up" data-aos-delay="300">
+            <div class="product-category">
+              <h3 class="category-title">
+                <i class="bi bi-award"></i>  <a href="{%url 'bestsellers_page' %}">  Best Sellers </a>
+              </h3>
+              <div class="product-list">
+                <div class="product-card">
+                  <div class="product-image">
+          <a href="{%url 'product_detail' slug='sony-wh-ch520' %}"><img src="{% static 'products/img/pro-10.webp' %}"  alt="Product Image" class="img-fluid" loading="lazy"></a> 
+                    <div class="product-badges">
+                      <span class="badge-sale">-15%</span>
+                    </div>
+                  </div>
+                  <div class="product-info">
+                <a href="{%url 'product_detail' slug='sony-wh-ch520' %}">   <h4 class="product-name">SONY WH-CH520</h4> </a>
+                    <div class="product-rating">
+                      <i class="bi bi-star-fill"></i>
+                      <i class="bi bi-star-fill"></i>
+                      <i class="bi bi-star-fill"></i>
+                      <i class="bi bi-star-fill"></i>
+                      <i class="bi bi-star-fill"></i>
+                      <span>(87)</span>
+                    </div>
+                    <div class="product-price">
+                      <span class="current-price">$399.00</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="product-card">
+                  <div class="product-image">
+                        <a href="{%url 'product_detail' slug='iphone' %}">  <img src="{% static 'products/img/iphone.jpg' %}"  alt="Product Image" class="img-fluid" loading="lazy"> </a>
+                  </div>
+                  <div class="product-info">
+                   <a href="{%url 'product_detail' slug='iphone' %}">   <h4 class="product-name">Apple iPhone 16 Pro Max</h4> </a>
+                    <div class="product-rating">
+                      <i class="bi bi-star-fill"></i>
+                      <i class="bi bi-star-fill"></i>
+                      <i class="bi bi-star-fill"></i>
+                      <i class="bi bi-star-fill"></i>
+                      <i class="bi bi-star-half"></i>
+                      <span>(56)</span>
+                    </div>
+                    <div class="product-price">
+                      <span class="current-price">$880.00</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="product-card">
+                  <div class="product-image">
+                      <a href="{%url 'product_detail' slug='t-shirt' %}"> <img src="{% static 'products/img/pro1.webp' %}"  alt="Product Image" class="img-fluid" loading="lazy"></a>
+                    <div class="product-badges">
+                      <span class="badge-hot">Hot</span>
+                    </div>
+                  </div>
+                  <div class="product-info">
+                   <a href="{%url 'product_detail' slug='t-shirt' %}"> <h4 class="product-name">T-Shirt</h4> </a> 
+                    <div class="product-rating">
+                      <i class="bi bi-star-fill"></i>
+                      <i class="bi bi-star-fill"></i>
+                      <i class="bi bi-star-fill"></i>
+                      <i class="bi bi-star-fill"></i>
+                      <i class="bi bi-star-fill"></i>
+                      <span>(112)</span>
+                    </div>
+                    <div class="product-price">
+                      <span class="current-price">$180</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-lg-4 col-md-6 mb-5 mb-md-0" data-aos="fade-up" data-aos-delay="400">
+            <div class="product-category">
+              <h3 class="category-title">
+                <i class="bi bi-star"></i> <a href="{%url 'new_arrivals_page' %}">  Featured Items </a>
+              </h3>
+              <div class="product-list">
+                <div class="product-card">
+                  <div class="product-image">
+                    <a href="{%url 'product_detail' slug='loli-heart-necklace-series-elegant-and-distinctive-heart-design-for-women-high-quality-jewelry-pe' %}">    <img src="{% static 'products/img/pro-33.avif' %}"  alt="Product Image" class="img-fluid" loading="lazy"> </a> 
+                  </div>
+                  <div class="product-info">
+                   <a href="{%url 'product_detail' slug='loli-heart-necklace-series-elegant-and-distinctive-heart-design-for-women-high-quality-jewelry-pe' %}">  <h4 class="product-name">legant and Distinctive Heart Design </h4> </a> 
+                    <div class="product-rating">
+                      <i class="bi bi-star-fill"></i>
+                      <i class="bi bi-star-fill"></i>
+                      <i class="bi bi-star-fill"></i>
+                      <i class="bi bi-star-fill"></i>
+                      <i class="bi bi-star"></i>
+                      <span>(32)</span>
+                    </div>
+                    <div class="product-price">
+                      <span class="current-price">$80.00</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="product-card">
+                  <div class="product-image">
+                    <a href="{%url 'product_detail' slug='hoodie-casual' %}">     <img src="{% static 'products/img/product/product-4.webp' %}"  alt="Product Image" class="img-fluid" loading="lazy">  </a> 
+                    <div class="product-badges">
+                      <span class="badge-limited">Limited</span>
+                    </div>
+                  </div>
+                  <div class="product-info">
+                     <a href="{%url 'product_detail' slug='hoodie-casual' %}"> <h4 class="product-name">Hoodie casual</h4>  </a> 
+                    <div class="product-rating">
+                      <i class="bi bi-star-fill"></i>
+                      <i class="bi bi-star-fill"></i>
+                      <i class="bi bi-star-fill"></i>
+                      <i class="bi bi-star-fill"></i>
+                      <i class="bi bi-star-half"></i>
+                      <span>(47)</span>
+                    </div>
+                    <div class="product-price">
+                      <span class="current-price">$70.00</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="product-card">
+                  <div class="product-image">
+                       <a href="{%url 'product_detail' slug='calvin-klein-leather-watch' %}">  <img src="{% static 'products/img/pro-12.webp' %}"  alt="Product Image" class="img-fluid" loading="lazy">  </a> 
+                  </div>
+                  <div class="product-info">
+                    <a href="{%url 'product_detail' slug='calvin-klein-leather-watch' %}">  <h4 class="product-name">Calvin Klein - Leather Watch</h4>  </a> 
+                    <div class="product-rating">
+                      <i class="bi bi-star-fill"></i>
+                      <i class="bi bi-star-fill"></i>
+                      <i class="bi bi-star-fill"></i>
+                      <i class="bi bi-star-fill"></i>
+                      <i class="bi bi-star-fill"></i>
+                      <span>(64)</span>
+                    </div>
+                    <div class="product-price">
+                      <span class="current-price">$70.00</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+    </section><!-- /Cards Section -->
+
+    <!-- Call To Action Section -->
+    <section id="call-to-action" class="call-to-action section">
+
+      <div class="container" data-aos="fade-up" data-aos-delay="100">
+
+        <div class="row">
+          <div class="col-lg-8 mx-auto">
+            <div class="main-content text-center" data-aos="zoom-in" data-aos-delay="200">
+              <div class="offer-badge" data-aos="fade-down" data-aos-delay="250">
+                <span class="limited-time">Limited Time</span>
+                <span class="offer-text">50% OFF</span>
+              </div>
+
+              <h2 data-aos="fade-up" data-aos-delay="300">Exclusive Flash Sale</h2>
+
+              <p class="subtitle" data-aos="fade-up" data-aos-delay="350">Don't miss out on our biggest sale of the year. Premium quality products at unbeatable prices for the next 48 hours only.</p>
+
+              <div class="countdown-wrapper" data-aos="fade-up" data-aos-delay="400">
+                <div class="countdown d-flex justify-content-center" data-count="2025/12/31">
+                  <div>
+                    <h3 class="count-days"></h3>
+                    <h4>Days</h4>
+                  </div>
+                  <div>
+                    <h3 class="count-hours"></h3>
+                    <h4>Hours</h4>
+                  </div>
+                  <div>
+                    <h3 class="count-minutes"></h3>
+                    <h4>Minutes</h4>
+                  </div>
+                  <div>
+                    <h3 class="count-seconds"></h3>
+                    <h4>Seconds</h4>
+                  </div>
+                </div>
+              </div>
+
+              <div class="action-buttons" data-aos="fade-up" data-aos-delay="450">
+                <a href="{% url 'bestsellers_page' %}" class="btn-shop-now">Shop Now</a>
+                <a href="#" class="btn-view-deals">View All Deals</a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="row featured-products-row" data-aos="fade-up" data-aos-delay="500">
+          <div class="col-lg-3 col-md-6" data-aos="zoom-in" data-aos-delay="100">
+
+            <div class="product-showcase">
+              <div class="product-image">
+                  <a href="{% url 'product_detail' slug='premium-wireless-headphones' %}">
+
+                <img src="{% static 'products/img/product/product-2.webp' %}"  alt="Product Image" class="img-fluid" loading="lazy">
+                        </a>
+                <div class="discount-badge">-45%</div>
+              </div>
+
+              <div class="product-details">
+                <h6>Premium Wireless Headphones</h6>
+                <div class="price-section">
+                  <span class="sale-price">$299.00</span>
+                </div>
+                <div class="rating-stars">
+                  <i class="bi bi-star-fill"></i>
+                  <i class="bi bi-star-fill"></i>
+                  <i class="bi bi-star-fill"></i>
+                  <i class="bi bi-star-fill"></i>
+                  <i class="bi bi-star-fill"></i>
+                </div>
+              </div>
+            </div>
+          </div><!-- End Product Showcase -->
+
+          <div class="col-lg-3 col-md-6" data-aos="zoom-in" data-aos-delay="150">
+            <div class="product-showcase">
+              <div class="product-image">
+                        <a href="{% url 'product_detail' slug='apple-watch-series-11-gps-46mm-smartwatch-with-jet-black-aluminium-case-with-black-sport-band-ml-s' %}"> <img src="{% static 'products/img/pro90.jpg' %}"  alt="Product Image" class="img-fluid" loading="lazy">  </a>
+                       
+                <div class="discount-badge">-60%</div>
+              </div>
+
+              <div class="product-details">
+                 <a href="{% url 'product_detail' slug='apple-watch-series-11-gps-46mm-smartwatch-with-jet-black-aluminium-case-with-black-sport-band-ml-s' %}"> <h6>Smart Fitness Tracker</h6>  </a>
+                <div class="price-section"> 
+                  <span class="sale-price">$500.00</span>
+                </div>
+                <div class="rating-stars">
+                  <i class="bi bi-star-fill"></i>
+                  <i class="bi bi-star-fill"></i>
+                  <i class="bi bi-star-fill"></i>
+                  <i class="bi bi-star-fill"></i>
+                  <i class="bi bi-star-half"></i>
+                </div>
+              </div>
+            </div>
+          </div><!-- End Product Showcase -->
+
+          <div class="col-lg-3 col-md-6" data-aos="zoom-in" data-aos-delay="200">
+            <div class="product-showcase">
+              <div class="product-image">
+                    <a href="{% url 'product_detail' slug='new-balance-mens-530-sneaker' %}">    <img src="{% static 'products/img/pro-39.jpg' %}"  alt="Product Image" class="img-fluid" loading="lazy">  </a>
+
+                <div class="discount-badge">-35%</div>
+              </div>
+              <div class="product-details">
+            <a href="{% url 'product_detail' slug='new-balance-mens-530-sneaker' %}">     <h6>New Balance mens 530 Sneaker</h6> </a>
+                <div class="price-section">
+                  <span class="original-price">$159</span>
+                  <span class="sale-price">$110</span>
+                </div>
+                <div class="rating-stars">
+                  <i class="bi bi-star-fill"></i>
+                  <i class="bi bi-star-fill"></i>
+                  <i class="bi bi-star-fill"></i>
+                  <i class="bi bi-star-fill"></i>
+                  <i class="bi bi-star-fill"></i>
+                </div>
+              </div>
+            </div>
+          </div><!-- End Product Showcase -->
+
+          <div class="col-lg-3 col-md-6" data-aos="zoom-in" data-aos-delay="250">
+            <div class="product-showcase">
+              <div class="product-image">
+                          <a href="{% url 'product_detail' slug='toshionics-crystal-diamond-table-lamp-touch-control-bedside-lamp-with-usb-port-creative-romantic-r' %}"> <img src="{% static 'products/img/porduct-1.jpg' %}"  alt="Product Image" class="img-fluid" loading="lazy">   </a>
+
+                <div class="discount-badge">-55%</div>
+              </div>
+              <div class="product-details">
+                 <a href="{% url 'product_detail' slug='toshionics-crystal-diamond-table-lamp-touch-control-bedside-lamp-with-usb-port-creative-romantic-r' %}">   <h6>Toshionics Crystal Diamond Table Lamp, Touch Control Bedside Lamp with USB Port, Creative Romantic R </h6>  </a>
+
+                <div class="price-section">
+                  <span class="sale-price">$70.00</span>
+                </div>
+                <div class="rating-stars">
+                  <i class="bi bi-star-fill"></i>
+                  <i class="bi bi-star-fill"></i>
+                  <i class="bi bi-star-fill"></i>
+                  <i class="bi bi-star-fill"></i>
+                  <i class="bi bi-star"></i>
+                </div>
+              </div>
+            </div>
+          </div><!-- End Product Showcase -->
+        </div>
+
+      </div>
+
+    </section><!-- /Call To Action Section -->
+
+  </main>
+
+
+
+{% endblock %}
+</body>
+
+</html>
+
+ <style>
+.product-image a {
+  display: block;
+}
+  
+</style>

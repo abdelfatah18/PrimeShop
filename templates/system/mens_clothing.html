@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+  <h1 class="mb-4">{{ category.name }}</h1>
+  <p>{{ category.description }}</p>
+
+  <div class="row">
+    {% for product in products %}
+      <div class="col-md-4 mb-3">
+        <div class="card shadow-sm h-100">
+          {% if product.image %}
+            <img src="{{ product.image.url }}" class="card-img-top product-img" alt="{{ product.name }}">
+          {% endif %}
+          <div class="card-body d-flex flex-column">
+            <h5 class="card-title">{{ product.name }}</h5>
+            <p class="card-text">{{ product.description }}</p>
+            <p class="text-muted">السعر: {{ product.price }} جنيه</p>
+            <!-- زرار إضافة للعربة -->
+            <form method="post" action="{% url 'add_to_cart' product.slug %}" class="mt-auto">
+              {% csrf_token %}
+              <button type="submit" class="btn btn-primary w-100">أضف إلى العربة</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    {% empty %}
+      <p>لا يوجد منتجات حالياً في هذه الفئة.</p>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}
