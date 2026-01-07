@@ -12,7 +12,7 @@ CSRF_TRUSTED_ORIGINS = [
 # ======================
 SECRET_KEY = os.getenv("SECRET_KEY", "unsafe-secret-key")
 DEBUG = True
-ALLOWED_HOSTS = ["*"]
+ALLOWED_HOSTS = ["primeshop-production.up.railway.app",]
 
 # ======================
 # Auth
