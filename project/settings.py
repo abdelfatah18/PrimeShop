@@ -126,7 +126,8 @@ INTEGRATION_ID = os.getenv("INTEGRATION_ID", "")
 
 
 
-EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+# settings.py
+EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 EMAIL_HOST = "smtp.gmail.com"
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
