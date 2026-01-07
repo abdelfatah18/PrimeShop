@@ -12,12 +12,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.getenv("SECRET_KEY")
 DEBUG = os.getenv("DEBUG") == "True"
 
-ALLOWED_HOSTS = [
-    "grand-youthfulness-production.up.railway.app",
-    "primeshop-production.up.railway.app",
-    "127.0.0.1",
-    "localhost",
-]
+ALLOWED_HOSTS = ["grand-youthfulness-production.up.railway.app"]
 
 
 raw_csrf = os.getenv("CSRF_TRUSTED_ORIGINS", "")
