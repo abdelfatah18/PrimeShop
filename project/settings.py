@@ -10,7 +10,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # Security
 # ======================
 SECRET_KEY = os.getenv("SECRET_KEY", "unsafe-secret-key")  # استخدم القيمة الافتراضية لو مش موجودة
-DEBUG = os.getenv("DEBUG", "True") == "True"
+DEBUG =False
 
 ALLOWED_HOSTS = ["primeshop-production.up.railway.app"]
 
