@@ -15,8 +15,9 @@ DEBUG = os.getenv("DEBUG", "True") == "True"
 ALLOWED_HOSTS = ["primeshop-production.up.railway.app"]
 
 CSRF_TRUSTED_ORIGINS = [
-    os.getenv("CSRF_TRUSTED_ORIGINS", "https://primeshop-production.up.railway.app").split(",")
+    "https://primeshop-production.up.railway.app",
 ]
+
 
 
 # ======================
