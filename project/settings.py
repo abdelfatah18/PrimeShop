@@ -12,9 +12,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.getenv("SECRET_KEY", "unsafe-secret-key")  # استخدم القيمة الافتراضية لو مش موجودة
 DEBUG = os.getenv("DEBUG", "True") == "True"
 
-ALLOWED_HOSTS = [
-    os.getenv("ALLOWED_HOSTS", "127.0.0.1,localhost,primeshop-production.up.railway.app").split(",")
-]
+ALLOWED_HOSTS = ["primeshop-production.up.railway.app"]
 
 CSRF_TRUSTED_ORIGINS = [
     os.getenv("CSRF_TRUSTED_ORIGINS", "https://primeshop-production.up.railway.app").split(",")
