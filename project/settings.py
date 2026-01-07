@@ -16,7 +16,9 @@ ALLOWED_HOSTS = ["primeshop-production.up.railway.app"]
 
 CSRF_TRUSTED_ORIGINS = [
     "https://primeshop-production.up.railway.app",
+    "http://primeshop-production.up.railway.app",
 ]
+
 
 
 
