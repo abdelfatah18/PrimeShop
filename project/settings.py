@@ -4,15 +4,22 @@ import dj_database_url
 import stripe
 
 BASE_DIR = Path(__file__).resolve().parent.parent
-CSRF_TRUSTED_ORIGINS = [
-    "https://primeshop-production.up.railway.app",
-]
+
+
 # ======================
 # Security
 # ======================
-SECRET_KEY = os.getenv("SECRET_KEY", "unsafe-secret-key")
-DEBUG = True
-ALLOWED_HOSTS = ["primeshop-production.up.railway.app",]
+SECRET_KEY = os.getenv("SECRET_KEY", "unsafe-secret-key")  # استخدم القيمة الافتراضية لو مش موجودة
+DEBUG = os.getenv("DEBUG", "True") == "True"
+
+ALLOWED_HOSTS = [
+    os.getenv("ALLOWED_HOSTS", "127.0.0.1,localhost,primeshop-production.up.railway.app").split(",")
+]
+
+CSRF_TRUSTED_ORIGINS = [
+    os.getenv("CSRF_TRUSTED_ORIGINS", "https://primeshop-production.up.railway.app").split(",")
+]
+
 
 # ======================
 # Auth
@@ -93,8 +100,8 @@ DATABASES = {
 # ======================
 # Stripe (Test only)
 # ======================
-STRIPE_SECRET_KEY = os.getenv("STRIPE_SECRET_KEY", "")
-STRIPE_PUBLISHABLE_KEY = os.getenv("STRIPE_PUBLISHABLE_KEY", "")
+STRIPE_SECRET_KEY = os.getenv("STRIPE_SECRET_KEY")
+STRIPE_PUBLISHABLE_KEY = os.getenv("STRIPE_PUBLISHABLE_KEY")
 stripe.api_key = STRIPE_SECRET_KEY
 
 # ======================
@@ -104,17 +111,19 @@ PAYMOB_API_KEY = os.getenv("PAYMOB_API_KEY", "")
 IFRAME_ID = os.getenv("IFRAME_ID", "")
 INTEGRATION_ID = os.getenv("INTEGRATION_ID", "")
 
+
 # ======================
 # Email
+
+EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER")
+EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+
 # ======================
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
 EMAIL_HOST = "smtp.gmail.com"
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER", "")
-EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD", "")
-DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
-
 # ======================
 # Internationalization
 # ======================
