@@ -20,10 +20,8 @@ ALLOWED_HOSTS = [
 ]
 
 
-CSRF_TRUSTED_ORIGINS = [
-    "https://grand-youthfulness-production.up.railway.app",
-    "https://primeshop-production.up.railway.app",
-]
+raw_csrf = os.getenv("CSRF_TRUSTED_ORIGINS", "")
+CSRF_TRUSTED_ORIGINS = [x.strip() for x in raw_csrf.split(",") if x.strip()]
 
 
 
