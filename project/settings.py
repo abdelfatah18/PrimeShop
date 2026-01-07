@@ -10,7 +10,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # Security
 # ======================
 SECRET_KEY = os.getenv("SECRET_KEY", "unsafe-secret-key")  # استخدم القيمة الافتراضية لو مش موجودة
-DEBUG =False
+DEBUG = os.getenv("DEBUG") == "True"
 
 ALLOWED_HOSTS = [
     "grand-youthfulness-production.up.railway.app",
