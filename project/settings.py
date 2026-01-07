@@ -4,7 +4,9 @@ import dj_database_url
 import stripe
 
 BASE_DIR = Path(__file__).resolve().parent.parent
-
+CSRF_TRUSTED_ORIGINS = [
+    "https://primeshop-production.up.railway.app",
+]
 # ======================
 # Security
 # ======================
