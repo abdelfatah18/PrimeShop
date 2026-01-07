@@ -14,7 +14,6 @@ DEBUG =False
 
 ALLOWED_HOSTS = [
     "primeshop-production.up.railway.app",
-    "0.0.0.0",
 ]
 
 CSRF_TRUSTED_ORIGINS = [
