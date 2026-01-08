@@ -102,11 +102,14 @@ import dj_database_url
 # Database
 # ======================
 DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
-    }
+    "default": dj_database_url.config(conn_max_age=600)
 }
+
+SESSION_ENGINE = "django.contrib.sessions.backends.db"
+SESSION_SAVE_EVERY_REQUEST = True
+
+SESSION_COOKIE_DOMAIN = ".up.railway.app"
+CSRF_COOKIE_DOMAIN = ".up.railway.app"
 
 
 # ======================
@@ -130,7 +133,8 @@ IFRAME_ID = os.getenv("IFRAME_ID", "")
 
 
 # settings.py
-EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+
 EMAIL_HOST = "smtp.gmail.com"
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
