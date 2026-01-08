@@ -12,7 +12,7 @@ def _ensure_settings():
     if not getattr(settings, "PAYMOB_API_KEY", None):
         missing.append("PAYMOB_API_KEY")
     if not getattr(settings, "PAYMOB_INTEGRATION_ID", None):
-        missing.append("PAYMOB_INTEGRATION_ID")
+        missing.append("INTEGRATION_ID")
     if not getattr(settings, "IFRAME_ID", None):
         missing.append("IFRAME_ID")
     if missing:
