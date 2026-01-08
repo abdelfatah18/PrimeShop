@@ -261,11 +261,22 @@ from django.http import JsonResponse
 from django.conf import settings
 from .models import Cart, CartItem, Order, OrderItem, Payment, Product
 from .paymob import authenticate, create_order, generate_payment_key
+from decimal import Decimal
+
+from decimal import Decimal
+from django.shortcuts import redirect, get_object_or_404
+from django.http import JsonResponse
+from django.conf import settings
+from django.contrib.auth.decorators import login_required
+
+from .models import Cart, Order, OrderItem, Payment
+from .paymob import authenticate, create_order, generate_payment_key
+
 
 @login_required
 def checkout_view(request):
     try:
-        # 1️⃣ جلب الطلب
+        # 1️⃣ جلب الطلب أو إنشاؤه
         order_id = request.session.get("order_id")
         cart = None
 
@@ -291,11 +302,13 @@ def checkout_view(request):
 
             request.session["order_id"] = order.id
 
-        # 2️⃣ حساب الإجمالي (جنيه)
-        total_amount = sum(
-            item.product.final_price * item.quantity
-            for item in order.items.all()
-        )
+        # 2️⃣ حساب الإجمالي بالجنيه (صح)
+        total_amount = Decimal("0.00")
+        for item in order.items.all():
+            total_amount += Decimal(item.product.final_price) * item.quantity
+
+        if total_amount <= 0:
+            return JsonResponse({"error": "Invalid order amount"}, status=400)
 
         # 3️⃣ إنشاء Payment
         payment = Payment.objects.create(
@@ -306,19 +319,19 @@ def checkout_view(request):
             payment_method="paymob",
         )
 
-        # 4️⃣ PayMob الحقيقي
+        # 4️⃣ PayMob
         auth_token = authenticate()
 
         paymob_order = create_order(
             auth_token=auth_token,
-            order_id=payment.id,
-            total_amount=total_amount
+            order_id=str(payment.id),          # لازم string
+            total_amount=float(total_amount)   # float فقط
         )
 
         payment_token = generate_payment_key(
             auth_token=auth_token,
             order_id=paymob_order["id"],
-            total_amount=total_amount,
+            total_amount=float(total_amount),  # float فقط
             email=request.user.email,
             billing_data={
                 "first_name": request.user.first_name or "Customer",
@@ -334,7 +347,7 @@ def checkout_view(request):
         if cart:
             cart.items.all().delete()
 
-        # 6️⃣ التحويل لصفحة PayMob الحقيقية
+        # 6️⃣ التحويل لـ iframe
         iframe_url = (
             f"https://accept.paymobsolutions.com/api/acceptance/iframes/"
             f"{settings.IFRAME_ID}?payment_token={payment_token}"
