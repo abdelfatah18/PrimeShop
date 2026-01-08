@@ -273,18 +273,31 @@ from .models import Cart, Order, OrderItem, Payment
 from .paymob import authenticate, create_order, generate_payment_key
 
 
+import logging
+from decimal import Decimal
+from django.shortcuts import get_object_or_404, redirect
+from django.http import JsonResponse
+from django.conf import settings
+from django.core.mail import EmailMultiAlternatives
+from django.contrib.auth.decorators import login_required
+
+from products.models import Order, OrderItem, Cart
+from payments.models import Payment
+from .paymob import authenticate, create_order, generate_payment_key
+
+logger = logging.getLogger(__name__)
+
 @login_required
 def checkout_view(request):
     try:
+        # 🔹 جلب order_id من session
         order_id = request.session.get("order_id")
-        cart = None
-
         if not order_id:
             return JsonResponse({"error": "Order not found"}, status=400)
 
         order = get_object_or_404(Order, id=order_id, customer=request.user)
 
-        # ✅ حساب الإجمالي الصح
+        # 🔹 حساب total_amount
         total_amount = Decimal("0.00")
         for item in order.items.all():
             total_amount += Decimal(item.product.final_price) * item.quantity
@@ -292,7 +305,7 @@ def checkout_view(request):
         if total_amount <= 0:
             return JsonResponse({"error": "Invalid order amount"}, status=400)
 
-        # ✅ إنشاء Payment
+        # 🔹 إنشاء Payment محلي
         payment = Payment.objects.create(
             order=order,
             user=request.user,
@@ -301,15 +314,23 @@ def checkout_view(request):
             payment_method="paymob",
         )
 
-        # ✅ PayMob
+        # =========================
+        # 1️⃣ Authentication
+        # =========================
         auth_token = authenticate()
 
+        # =========================
+        # 2️⃣ Create PayMob Order
+        # =========================
         paymob_order = create_order(
             auth_token=auth_token,
-            order_id=str(payment.id),     # merchant_order_id
+            order_id=order.id,       # مهم: استخدم order.id مش payment.id
             total_amount=float(total_amount)
         )
 
+        # =========================
+        # 3️⃣ Generate Payment Key
+        # =========================
         payment_token = generate_payment_key(
             auth_token=auth_token,
             order_id=paymob_order["id"],
@@ -318,22 +339,84 @@ def checkout_view(request):
             billing_data={
                 "first_name": request.user.first_name or "Customer",
                 "last_name": request.user.last_name or "User",
-                "phone_number": "+201000000000",
+                "phone_number": "+201234567890",  # عدل رقم العميل الحقيقي
                 "city": "Cairo",
                 "country": "EG",
                 "state": "Cairo",
             }
         )
 
-        iframe_url = (
-            f"https://accept.paymobsolutions.com/api/acceptance/iframes/"
-            f"{settings.IFRAME_ID}?payment_token={payment_token}"
-        )
+        # =========================
+        # 4️⃣ Redirect to PayMob iframe
+        # =========================
+        iframe_url = f"https://accept.paymobsolutions.com/api/acceptance/iframes/{settings.IFRAME_ID}?payment_token={payment_token}"
 
+        # =========================
+        # 5️⃣ إرسال الإيميل
+        # =========================
+        if request.user.order_updates:  # لو العميل مفعل الإشعارات
+            subject = f"Order Confirmation - #{order.id}"
+            from_email = settings.DEFAULT_FROM_EMAIL
+            to_email = [request.user.email]
+
+            # تفاصيل المنتجات
+            items_html = ""
+            for item in order.items.all():
+                items_html += f"""
+                <tr>
+                    <td style="padding:8px; border:1px solid #ddd;">{item.product.name}</td>
+                    <td style="padding:8px; border:1px solid #ddd; text-align:center;">{item.quantity}</td>
+                    <td style="padding:8px; border:1px solid #ddd; text-align:right;">${item.product.final_price:.2f}</td>
+                    <td style="padding:8px; border:1px solid #ddd; text-align:right;">${item.product.final_price * item.quantity:.2f}</td>
+                </tr>
+                """
+
+            total_price = sum(item.product.final_price * item.quantity for item in order.items.all())
+
+            html_content = f"""
+            <html>
+                <body style="font-family: Arial, sans-serif; line-height:1.5;">
+                    <h2 style="color:#2c3e50;">Hi {request.user.first_name},</h2>
+                    <p>Thank you for your order! Your order <strong>#{order.id}</strong> has been created successfully.</p>
+                    <h3>Order Details:</h3>
+                    <table style="border-collapse: collapse; width:100%; max-width:600px;">
+                        <thead>
+                            <tr>
+                                <th style="padding:8px; border:1px solid #ddd; text-align:left;">Product</th>
+                                <th style="padding:8px; border:1px solid #ddd; text-align:center;">Quantity</th>
+                                <th style="padding:8px; border:1px solid #ddd; text-align:right;">Price</th>
+                                <th style="padding:8px; border:1px solid #ddd; text-align:right;">Subtotal</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {items_html}
+                            <tr>
+                                <td colspan="3" style="padding:8px; border:1px solid #ddd; text-align:right; font-weight:bold;">Total</td>
+                                <td style="padding:8px; border:1px solid #ddd; text-align:right; font-weight:bold;">${total_price:.2f}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <p>We will notify you once your order is shipped. Thank you for shopping with us!</p>
+                </body>
+            </html>
+            """
+
+            msg = EmailMultiAlternatives(subject, "", from_email, to_email)
+            msg.attach_alternative(html_content, "text/html")
+            msg.send(fail_silently=False)
+
+        # =========================
+        # 6️⃣ مسح الـ cart
+        # =========================
+        Cart.objects.filter(customer=request.user).delete()
+
+        # =========================
+        # 7️⃣ Redirect للـ iframe
+        # =========================
         return redirect(iframe_url)
 
     except Exception as e:
-        print("⚠️ PayMob Error:", str(e))
+        logger.error("⚠️ PayMob Error: %s", e, exc_info=True)
         return JsonResponse({"error": str(e)}, status=500)
 
 
