@@ -264,32 +264,24 @@ from .paymob import authenticate, create_order, generate_payment_key
 
 @login_required
 def checkout_view(request):
-    """
-    ينشئ طلب (Order) من الكارت، يسجل Payment Pending،
-    يتصل بـ PayMob للحصول على payment_token،
-    ثم يحوّل المستخدم إلى صفحة الدفع.
-    """
     try:
-        # 1️⃣ نحاول نجيب الطلب الحالي من الـ session
+        # 1️⃣ جلب الطلب
         order_id = request.session.get("order_id")
-        cart = None  # تعريف cart لتجنب الخطأ
+        cart = None
 
         if order_id:
             order = get_object_or_404(Order, id=order_id, customer=request.user)
         else:
-            # جلب الكارت الخاص بالمستخدم أو إنشاؤه
-            cart, created = Cart.objects.get_or_create(customer=request.user)
+            cart, _ = Cart.objects.get_or_create(customer=request.user)
 
             if not cart.items.exists():
                 return JsonResponse({"error": "Cart is empty"}, status=400)
 
-            # إنشاء Order جديد
             order = Order.objects.create(
                 customer=request.user,
                 customer_name=request.user.username,
             )
 
-            # تحويل CartItems → OrderItems
             for item in cart.items.all():
                 OrderItem.objects.create(
                     order=order,
@@ -297,14 +289,15 @@ def checkout_view(request):
                     quantity=item.quantity
                 )
 
-            # حفظ order_id في الجلسة
             request.session["order_id"] = order.id
 
-        # 2️⃣ نحسب إجمالي السعر
-        total_amount = sum(item.product.final_price * item.quantity for item in order.items.all())
-        amount_cents = int(total_amount * 100)
+        # 2️⃣ حساب الإجمالي (جنيه)
+        total_amount = sum(
+            item.product.final_price * item.quantity
+            for item in order.items.all()
+        )
 
-        # 3️⃣ إنشاء Payment جديد بالحالة pending
+        # 3️⃣ إنشاء Payment
         payment = Payment.objects.create(
             order=order,
             user=request.user,
@@ -313,14 +306,20 @@ def checkout_view(request):
             payment_method="paymob",
         )
 
-        # 4️⃣ خطوات PayMob
+        # 4️⃣ PayMob الحقيقي
         auth_token = authenticate()
-        order_data = create_order(auth_token, amount_cents, merchant_order_id=payment.id)
+
+        paymob_order = create_order(
+            auth_token=auth_token,
+            order_id=payment.id,
+            total_amount=total_amount
+        )
+
         payment_token = generate_payment_key(
-            auth_token,
-            order_data["id"],
-            amount_cents,
-            request.user.email,
+            auth_token=auth_token,
+            order_id=paymob_order["id"],
+            total_amount=total_amount,
+            email=request.user.email,
             billing_data={
                 "first_name": request.user.first_name or "Customer",
                 "last_name": request.user.last_name or "User",
@@ -331,16 +330,19 @@ def checkout_view(request):
             }
         )
 
-        # 5️⃣ نفضي الكارت بعد إنشاء الطلب بنجاح إذا موجود
+        # 5️⃣ مسح الكارت
         if cart:
             cart.items.all().delete()
 
-        # 6️⃣ تحويل المستخدم لصفحة الدفع داخل IFrame
-        iframe_url = f"https://accept.paymobsolutions.com/api/acceptance/iframes/{settings.IFRAME_ID}?payment_token={payment_token}"
+        # 6️⃣ التحويل لصفحة PayMob الحقيقية
+        iframe_url = (
+            f"https://accept.paymobsolutions.com/api/acceptance/iframes/"
+            f"{settings.IFRAME_ID}?payment_token={payment_token}"
+        )
+
         return redirect(iframe_url)
 
     except Exception as e:
-        # معالجة أي خطأ يحدث أثناء الاتصال بـ PayMob
         print("⚠️ PayMob Error:", str(e))
         return JsonResponse({"error": str(e)}, status=500)
 
