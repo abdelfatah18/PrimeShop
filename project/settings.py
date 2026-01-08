@@ -51,7 +51,8 @@ INSTALLED_APPS = [
     "products",
     "accounts",
     "app",
-
+    "cloudinary",
+    "cloudinary_storage",
     "rest_framework",
     "widget_tweaks",
     "embed_video",
