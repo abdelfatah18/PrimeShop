@@ -42,6 +42,11 @@ def authenticate():
 # 2️⃣ Create Order (EGP)
 # =========================
 def create_order(auth_token, order_id, total_amount):
+    """
+    إنشاء أوردر على PayMob مع المنتجات من Order
+    """
+    from .models import Order  # تأكد أن المسار صحيح حسب مشروعك
+
     url = f"{PAYMOB_BASE}/ecommerce/orders"
 
     headers = {
@@ -49,18 +54,36 @@ def create_order(auth_token, order_id, total_amount):
         "Content-Type": "application/json"
     }
 
+    # 🟢 جلب الأوردر من قاعدة البيانات
+    order = Order.objects.get(id=order_id)
+
+    # 🟢 تجهيز items_payload من كل منتج في الأوردر
+    items_payload = []
+    for item in order.items.all():
+        items_payload.append({
+            "name": item.product.name,
+            "amount_cents": int(item.product.final_price * 100),
+            "quantity": item.quantity,
+            "description": item.product.description or item.product.name
+        })
+
+    # 🟢 إنشاء payload كامل
     payload = {
-        "merchant_order_id": str(order_id),   # لازم string
+        "merchant_order_id": str(order_id),
         "amount_cents": int(float(total_amount) * 100),
         "currency": "EGP",
         "delivery_needed": False,
-        "items": []
+        "items": items_payload
     }
 
+    # 🔥 إرسال الطلب لـ PayMob
     resp = requests.post(url, json=payload, headers=headers, timeout=10)
-    resp.raise_for_status()
-    return resp.json()
 
+    # 🟢 لو حصل خطأ، هيتوقف هنا ويرجع exception
+    resp.raise_for_status()
+
+    # 🔹 إرجاع البيانات كاملة
+    return resp.json()
 
 # =========================
 # 3️⃣ Generate Payment Key
