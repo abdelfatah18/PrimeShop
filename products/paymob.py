@@ -42,10 +42,6 @@ def authenticate():
 # 2️⃣ Create Order (EGP)
 # =========================
 def create_order(auth_token, order_id, total_amount):
-    """
-    total_amount = السعر بالجنيه (مثال: 150.75)
-    """
-
     url = f"{PAYMOB_BASE}/ecommerce/orders"
 
     headers = {
@@ -54,11 +50,11 @@ def create_order(auth_token, order_id, total_amount):
     }
 
     payload = {
-        "merchant_order_id": str(order_id),
-        "amount_cents": int(total_amount * 100),  # جنيه → قرش
+        "merchant_order_id": str(order_id),   # لازم string
+        "amount_cents": int(float(total_amount) * 100),
         "currency": "EGP",
         "delivery_needed": False,
-        "items": []  # فاضي (أفضل وأسرع)
+        "items": []
     }
 
     resp = requests.post(url, json=payload, headers=headers, timeout=10)
