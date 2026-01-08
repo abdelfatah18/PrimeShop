@@ -118,8 +118,8 @@ stripe.api_key = STRIPE_SECRET_KEY
 # PayMob (Test)
 # ======================
 PAYMOB_API_KEY = os.getenv("PAYMOB_API_KEY", "")
-PAYMOB_INTEGRATION_ID = os.getenv("IFRAME_ID", "")
-INTEGRATION_ID = os.getenv("INTEGRATION_ID", "")
+PAYMOB_INTEGRATION_ID = os.getenv("PAYMOB_INTEGRATION_ID", "")
+IFRAME_ID = os.getenv("IFRAME_ID", "")  
 
 
 # ======================
