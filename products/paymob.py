@@ -88,6 +88,9 @@ def create_order(auth_token, order_id, total_amount):
 # =========================
 # 3️⃣ Generate Payment Key
 # =========================
+import logging
+logger = logging.getLogger(__name__)
+
 def generate_payment_key(auth_token, order_id, total_amount, email,
                          billing_data=None, expiration=3600):
 
@@ -129,8 +132,12 @@ def generate_payment_key(auth_token, order_id, total_amount, email,
         "integration_id": int(settings.PAYMOB_INTEGRATION_ID),
     }
 
-    resp = requests.post(url, json=payload, headers=headers, timeout=10)
-    resp.raise_for_status()
+    try:
+        resp = requests.post(url, json=payload, headers=headers, timeout=10)
+        resp.raise_for_status()
+    except requests.exceptions.HTTPError as e:
+        logger.error("PayMob generate_payment_key failed:\nPayload: %s\nResponse: %s", payload, e.response.text)
+        raise
 
     token = resp.json().get("token")
     if not token:
