@@ -276,33 +276,15 @@ from .paymob import authenticate, create_order, generate_payment_key
 @login_required
 def checkout_view(request):
     try:
-        # 1️⃣ جلب الطلب أو إنشاؤه
         order_id = request.session.get("order_id")
         cart = None
 
-        if order_id:
-            order = get_object_or_404(Order, id=order_id, customer=request.user)
-        else:
-            cart, _ = Cart.objects.get_or_create(customer=request.user)
+        if not order_id:
+            return JsonResponse({"error": "Order not found"}, status=400)
 
-            if not cart.items.exists():
-                return JsonResponse({"error": "Cart is empty"}, status=400)
+        order = get_object_or_404(Order, id=order_id, customer=request.user)
 
-            order = Order.objects.create(
-                customer=request.user,
-                customer_name=request.user.username,
-            )
-
-            for item in cart.items.all():
-                OrderItem.objects.create(
-                    order=order,
-                    product=item.product,
-                    quantity=item.quantity
-                )
-
-            request.session["order_id"] = order.id
-
-        # 2️⃣ حساب الإجمالي بالجنيه (صح)
+        # ✅ حساب الإجمالي الصح
         total_amount = Decimal("0.00")
         for item in order.items.all():
             total_amount += Decimal(item.product.final_price) * item.quantity
@@ -310,7 +292,7 @@ def checkout_view(request):
         if total_amount <= 0:
             return JsonResponse({"error": "Invalid order amount"}, status=400)
 
-        # 3️⃣ إنشاء Payment
+        # ✅ إنشاء Payment
         payment = Payment.objects.create(
             order=order,
             user=request.user,
@@ -319,19 +301,19 @@ def checkout_view(request):
             payment_method="paymob",
         )
 
-        # 4️⃣ PayMob
+        # ✅ PayMob
         auth_token = authenticate()
 
         paymob_order = create_order(
             auth_token=auth_token,
-            order_id=str(payment.id),          # لازم string
-            total_amount=float(total_amount)   # float فقط
+            order_id=str(payment.id),     # merchant_order_id
+            total_amount=float(total_amount)
         )
 
         payment_token = generate_payment_key(
             auth_token=auth_token,
             order_id=paymob_order["id"],
-            total_amount=float(total_amount),  # float فقط
+            total_amount=float(total_amount),
             email=request.user.email,
             billing_data={
                 "first_name": request.user.first_name or "Customer",
@@ -339,15 +321,10 @@ def checkout_view(request):
                 "phone_number": "+201000000000",
                 "city": "Cairo",
                 "country": "EG",
-                "state": "Cairo"
+                "state": "Cairo",
             }
         )
 
-        # 5️⃣ مسح الكارت
-        if cart:
-            cart.items.all().delete()
-
-        # 6️⃣ التحويل لـ iframe
         iframe_url = (
             f"https://accept.paymobsolutions.com/api/acceptance/iframes/"
             f"{settings.IFRAME_ID}?payment_token={payment_token}"
@@ -358,20 +335,6 @@ def checkout_view(request):
     except Exception as e:
         print("⚠️ PayMob Error:", str(e))
         return JsonResponse({"error": str(e)}, status=500)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
