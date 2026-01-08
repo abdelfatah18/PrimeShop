@@ -1,18 +1,7 @@
 import requests
 from django.conf import settings
 
-# -------------------------
-# Helper functions for PayMob
-# -------------------------
-# تأكد إنك ضايف في settings.py:
-# PAYMOB_API_KEY, INTEGRATION_ID, IFRAME_ID
-# مثال:
-# PAYMOB_API_KEY = "your_api_key"
-# INTEGRATION_ID = 123456
-# IFRAME_ID = 123456
-
 PAYMOB_BASE = "https://accept.paymobsolutions.com/api"
-
 
 
 def _ensure_settings():
@@ -27,113 +16,105 @@ def _ensure_settings():
         raise RuntimeError(f"Missing PayMob settings: {', '.join(missing)}")
 
 
+# -------------------------
+# 1️⃣ Authentication
+# -------------------------
 def authenticate():
-    """
-    يحصل على auth_token من PayMob.
-    يعيد الـ auth_token كسلسلة أو يرمي استثناء واضح لو فشل.
-    """
     _ensure_settings()
+
     url = f"{PAYMOB_BASE}/api/auth/tokens"
-    payload = {"api_key": settings.PAYMOB_API_KEY}
+    payload = {
+        "api_key": settings.PAYMOB_API_KEY
+    }
 
-    try:
-        resp = requests.post(url, json=payload, timeout=10)
-        resp.raise_for_status()
-    except requests.RequestException as e:
-        # فشل الشبكة أو وقت الاستجابة
-        raise RuntimeError(f"PayMob authenticate failed: {e}") from e
+    resp = requests.post(url, json=payload, timeout=10)
+    resp.raise_for_status()
 
-    data = resp.json()
-    token = data.get("token")
+    token = resp.json().get("token")
     if not token:
-        raise RuntimeError(f"PayMob authenticate: no token in response: {data}")
+        raise RuntimeError("PayMob authenticate: token not returned")
+
     return token
 
 
-def create_order(auth_token, amount_cents, merchant_order_id=None, delivery_needed=False):
+# -------------------------
+# 2️⃣ Create Order (NO HTML – JSON ONLY)
+# -------------------------
+def create_order(auth_token, order_id, total_amount, currency="USD"):
     """
-    ينشئ Order في PayMob (ecommerce/orders)
-    - auth_token: ناتج authenticate()
-    - amount_cents: المبلغ بالبس (مثلاً EGP -> جنيه * 100)
-    - merchant_order_id: أي قيمة تعريفية عندك (مثلاً Payment.id أو Order.id)
-    يعيد dict الاستجابة (json) أو يرمي استثناء.
+    total_amount = المجموع الكلي (مثال: 6.00)
     """
+
     url = f"{PAYMOB_BASE}/ecommerce/orders"
-    headers = {"Authorization": f"Bearer {auth_token}"}
-    payload = {
-        "delivery_needed": delivery_needed,
-        "amount_cents": amount_cents,
-        "currency": "EGP",
-        "merchant_order_id": str(merchant_order_id) if merchant_order_id is not None else None,
-        # العناصر (items) اختيارية — تقدر تضيف تفاصيل لو تحب
-        "items": [],
+
+    headers = {
+        "Authorization": f"Bearer {auth_token}",
+        "Content-Type": "application/json"
     }
 
-    # احذف المفاتيح اللي قيمتها None
-    payload = {k: v for k, v in payload.items() if v is not None}
+    payload = {
+        "merchant_order_id": str(order_id),
+        "amount_cents": int(total_amount * 100),  # مثال: 6$ → 600
+        "currency": currency,                     # USD أو EGP
+        "delivery_needed": False,
+        "items": []                               # فاضية (أفضل مع آلاف المنتجات)
+    }
 
-    try:
-        resp = requests.post(url, json=payload, headers=headers, timeout=10)
-        resp.raise_for_status()
-    except requests.RequestException as e:
-        raise RuntimeError(f"PayMob create_order failed: {e}") from e
+    resp = requests.post(url, json=payload, headers=headers, timeout=10)
+    resp.raise_for_status()
 
     return resp.json()
 
 
-def generate_payment_key(auth_token, order_id, amount_cents, email,
-                         billing_data=None, expiration=3600, integration_id=None):
-    """
-    ينشئ payment_key (token) لاستخدامه في iframe.
-    - billing_data: dict اختياري لو عندك بيانات العميل (phone, first_name, last_name, city, country,...)
-    - integration_id: لو حبيت تجاوزه، يقرأ من settings.INTEGRATION_ID
-    يعيد token كسلسلة أو يرمي استثناء.
-    """
+# -------------------------
+# 3️⃣ Generate Payment Key
+# -------------------------
+def generate_payment_key(auth_token, order_id, total_amount, email,
+                         billing_data=None, currency="USD", expiration=3600):
+
     _ensure_settings()
-    if integration_id is None:
-        integration_id = getattr(settings, "INTEGRATION_ID")
 
     url = f"{PAYMOB_BASE}/api/acceptance/payment_keys"
-    headers = {"Authorization": f"Bearer {auth_token}"}
 
-    # بيانات افتراضية قابلة للتبديل (اختبارية)
+    headers = {
+        "Authorization": f"Bearer {auth_token}",
+        "Content-Type": "application/json"
+    }
+
     default_billing = {
-        "apartment": "N/A",
-        "email": email or "test@example.com",
-        "floor": "N/A",
+        "apartment": "NA",
+        "email": email,
+        "floor": "NA",
         "first_name": "Customer",
-        "street": "N/A",
-        "building": "N/A",
-        "phone_number": "+201000000000",  # تأكد من شكل رقم الهاتف
+        "street": "NA",
+        "building": "NA",
+        "phone_number": "+201000000000",
         "shipping_method": "PKG",
         "postal_code": "00000",
         "city": "Cairo",
-        "country": "EG",
+        "country": "US" if currency == "USD" else "EG",
         "last_name": "Customer",
-        "state": "Cairo"
+        "state": "NA"
     }
 
     if billing_data:
         default_billing.update(billing_data)
 
     payload = {
-    "merchant_order_id": order.id,          # رقم الطلب عندك
-    "amount_cents": int(order.total * 100), # المجموع الكلي × 100
-    "currency": "EGP",                       # أو USD حسب عملتك
-    "delivery_needed": True,
-    "items": []    
-        # ممكن تسيبها فاضية لو عندك آلاف المنتجات
+        "auth_token": auth_token,
+        "amount_cents": int(total_amount * 100),
+        "expiration": expiration,
+        "order_id": order_id,
+        "billing_data": default_billing,
+        "currency": currency,
+        "integration_id": int(settings.INTEGRATION_ID),
     }
 
+    resp = requests.post(url, json=payload, headers=headers, timeout=10)
+    resp.raise_for_status()
 
-    try:
-        resp = requests.post(url, json=payload, headers=headers, timeout=10)
-        resp.raise_for_status()
-    except requests.RequestException as e:
-        raise RuntimeError(f"PayMob generate_payment_key failed: {e} - response: {getattr(e, 'response', None)}") from e
-
-    data = resp.json()
-    token = data.get("token")
+    token = resp.json().get("token")
     if not token:
-        raise RuntimeError(f"PayMob generate_payment_key: no token in response: {data}")
+        raise RuntimeError("PayMob payment key not returned")
+
     return token
