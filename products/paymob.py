@@ -4,28 +4,29 @@ from django.conf import settings
 PAYMOB_BASE = "https://accept.paymobsolutions.com/api"
 
 
+# =========================
+# Check settings
+# =========================
 def _ensure_settings():
     missing = []
     if not getattr(settings, "PAYMOB_API_KEY", None):
         missing.append("PAYMOB_API_KEY")
-    if not getattr(settings, "INTEGRATION_ID", None):
-        missing.append("INTEGRATION_ID")
+    if not getattr(settings, "PAYMOB_INTEGRATION_ID", None):
+        missing.append("PAYMOB_INTEGRATION_ID")
     if not getattr(settings, "IFRAME_ID", None):
         missing.append("IFRAME_ID")
     if missing:
         raise RuntimeError(f"Missing PayMob settings: {', '.join(missing)}")
 
 
-# -------------------------
+# =========================
 # 1️⃣ Authentication
-# -------------------------
+# =========================
 def authenticate():
     _ensure_settings()
 
     url = f"{PAYMOB_BASE}/api/auth/tokens"
-    payload = {
-        "api_key": settings.PAYMOB_API_KEY
-    }
+    payload = {"api_key": settings.PAYMOB_API_KEY}
 
     resp = requests.post(url, json=payload, timeout=10)
     resp.raise_for_status()
@@ -37,12 +38,12 @@ def authenticate():
     return token
 
 
-# -------------------------
-# 2️⃣ Create Order (NO HTML – JSON ONLY)
-# -------------------------
-def create_order(auth_token, order_id, total_amount, currency="USD"):
+# =========================
+# 2️⃣ Create Order (EGP)
+# =========================
+def create_order(auth_token, order_id, total_amount):
     """
-    total_amount = المجموع الكلي (مثال: 6.00)
+    total_amount = السعر بالجنيه (مثال: 150.75)
     """
 
     url = f"{PAYMOB_BASE}/ecommerce/orders"
@@ -54,23 +55,22 @@ def create_order(auth_token, order_id, total_amount, currency="USD"):
 
     payload = {
         "merchant_order_id": str(order_id),
-        "amount_cents": int(total_amount * 100),  # مثال: 6$ → 600
-        "currency": currency,                     # USD أو EGP
+        "amount_cents": int(total_amount * 100),  # جنيه → قرش
+        "currency": "EGP",
         "delivery_needed": False,
-        "items": []                               # فاضية (أفضل مع آلاف المنتجات)
+        "items": []  # فاضي (أفضل وأسرع)
     }
 
     resp = requests.post(url, json=payload, headers=headers, timeout=10)
     resp.raise_for_status()
-
     return resp.json()
 
 
-# -------------------------
+# =========================
 # 3️⃣ Generate Payment Key
-# -------------------------
+# =========================
 def generate_payment_key(auth_token, order_id, total_amount, email,
-                         billing_data=None, currency="USD", expiration=3600):
+                         billing_data=None, expiration=3600):
 
     _ensure_settings()
 
@@ -92,9 +92,9 @@ def generate_payment_key(auth_token, order_id, total_amount, email,
         "shipping_method": "PKG",
         "postal_code": "00000",
         "city": "Cairo",
-        "country": "US" if currency == "USD" else "EG",
+        "country": "EG",
         "last_name": "Customer",
-        "state": "NA"
+        "state": "Cairo"
     }
 
     if billing_data:
@@ -106,8 +106,8 @@ def generate_payment_key(auth_token, order_id, total_amount, email,
         "expiration": expiration,
         "order_id": order_id,
         "billing_data": default_billing,
-        "currency": currency,
-        "integration_id": int(settings.INTEGRATION_ID),
+        "currency": "EGP",
+        "integration_id": int(settings.PAYMOB_INTEGRATION_ID),
     }
 
     resp = requests.post(url, json=payload, headers=headers, timeout=10)
