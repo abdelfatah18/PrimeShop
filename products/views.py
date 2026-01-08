@@ -688,29 +688,46 @@ from django.views.decorators.csrf import csrf_exempt
 @csrf_exempt
 def payment_callback(request):
     """
-    دالة تستقبل الـ callback من Paymob بعد الدفع (ناجح أو فاشل)
+    PayMob callback بعد الدفع
     """
-    if request.method == "GET":
-        data = request.GET.dict()
-        print("🔔 Paymob Callback Data:", data)
+    if request.method != "GET":
+        return HttpResponse(status=405)
 
-        success = data.get("success") == "true"
-        order_id = data.get("merchant_order_id")
-        message = data.get("data.message", "")
+    data = request.GET.dict()
+    print("🔔 Paymob Callback Data:", data)
 
-        if success:
-            # تمرير بيانات للـ template
-            return render(request, "products/payment_success.html", {
-                "order_id": order_id,
-                "message": message
-            })
-        else:
-            return render(request, "products/payment_fail.html", {
-                "order_id": order_id,
-                "message": message
-            })
+    success = data.get("success") == "true"
+    merchant_order_id = data.get("merchant_order_id")  # ده Payment.id
+    amount_cents = data.get("amount_cents")
 
-    return HttpResponse(status=405)  # لو مش GET
+    if not merchant_order_id:
+        return HttpResponse("Missing merchant_order_id", status=400)
+
+    # 1️⃣ هات الـ Payment
+    payment = Payment.objects.filter(id=merchant_order_id).first()
+
+    if not payment:
+        return HttpResponse("Payment not found", status=404)
+
+    # 2️⃣ تأكيد المبلغ (أمان)
+    expected_cents = int(payment.amount * 100)
+    if amount_cents and int(amount_cents) != expected_cents:
+        payment.status = "failed"
+        payment.save()
+        return HttpResponse("Amount mismatch", status=400)
+
+    # 3️⃣ تحديث الحالة
+    if success:
+        payment.status = "paid"
+        payment.save()
+
+        return redirect("payment_success", order_id=payment.order.id)
+    else:
+        payment.status = "failed"
+        payment.save()
+
+        return redirect("payment_fail")
+
 
 
 
