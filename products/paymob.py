@@ -117,14 +117,14 @@ def generate_payment_key(auth_token, order_id, amount_cents, email,
         default_billing.update(billing_data)
 
     payload = {
-        "auth_token": auth_token,
-        "amount_cents": amount_cents,
-        "expiration": expiration,
-        "order_id": order_id,
-        "billing_data": default_billing,
-        "currency": "EGP",
-        "integration_id": int(integration_id),
+    "merchant_order_id": order.id,          # رقم الطلب عندك
+    "amount_cents": int(order.total * 100), # المجموع الكلي × 100
+    "currency": "EGP",                       # أو USD حسب عملتك
+    "delivery_needed": True,
+    "items": []    
+        # ممكن تسيبها فاضية لو عندك آلاف المنتجات
     }
+
 
     try:
         resp = requests.post(url, json=payload, headers=headers, timeout=10)
