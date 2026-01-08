@@ -46,4 +46,6 @@ virtualenv==20.35.4
 whitenoise==6.11.0
 cloudinary
 django-cloudinary-storage
+gunicorn
+
 
