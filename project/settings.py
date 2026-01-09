@@ -101,9 +101,13 @@ import dj_database_url
 # ======================
 # Database
 # ======================
+import dj_database_url
+import os
+
 DATABASES = {
-    "default": dj_database_url.config(conn_max_age=600)
+    'default': dj_database_url.parse(os.getenv("DATABASE_URL"))
 }
+
 
 SESSION_ENGINE = "django.contrib.sessions.backends.db"
 SESSION_SAVE_EVERY_REQUEST = True
