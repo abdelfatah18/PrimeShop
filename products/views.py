@@ -282,7 +282,7 @@ from django.core.mail import EmailMultiAlternatives
 from django.contrib.auth.decorators import login_required
 
 from products.models import Order, OrderItem, Cart
-from payments.models import Payment
+from .models import Payment
 from .paymob import authenticate, create_order, generate_payment_key
 
 logger = logging.getLogger(__name__)
